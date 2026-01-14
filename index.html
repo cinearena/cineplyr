@@ -59,10 +59,15 @@
         </select>
       </div>
 
-      <div id="player" aria-label="Video player" style="display: block;"></div>
+      <div id="player" aria-label="Video player" style="display: none;">
+        <div class="custom-shaka-spinner-container" id="customSpinner" aria-hidden="true">
+          <div class="custom-shaka-spinner" aria-hidden="true"></div>
+        </div>
+      </div>
 
-      
-
+      <div class="language-buttons" role="tablist" aria-label="Available audio / streams" style="display: none;"></div>
+    </div>
+  </div>
 
   <div style="max-width:var(--max-width);width:100%;margin:10px auto;display:flex;justify-content:center;">
     <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer" style="padding:12px 20px;">
