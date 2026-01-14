@@ -1,0 +1,143 @@
+<html lang="en"><head>
+
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>CineArena.Live</title>
+
+  <!-- External player CSS -->
+  <link rel="stylesheet" href="cdn.plyr.io/3.7.8/plyr.css">
+  <link rel="stylesheet" href="cdn.jsdelivr.net/npm/dplayer_1.26.0/dist/dplayer.min.css">
+  <link rel="stylesheet" href="cdnjs.cloudflare.com/ajax/libs/shaka_player/4.16.3/controls.css" crossorigin="anonymous">
+
+  <!-- NOTE: JW Player library will be loaded dynamically below (see code). -->
+
+  <!-- Small anti-devtools script kept as original (optional) -->
+  <script src="cdn.jsdelivr.net/npm/disable_devtool_latest"></script>
+  
+
+  
+<script src="cdn.jwplayer.com/libraries/sahhwvzq.js" async=""></script><link rel="stylesheet" href="css/inline_styles.css"></head>
+<body>
+  <header id="topHeader" role="banner" aria-label="Site header">
+    <div class="header-inner">
+      <a class="logo" href="/" id="siteLogo">CINE ARENA<small>LIVE</small></a>
+
+      <div class="header-actions" aria-hidden="false">
+        <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer" title="Join our Telegram channel">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+            <path d="M21.5 3.3l-3.7 17.3c-.3 1.2-1.1 1.5-2.2.95l-5.9-4.35-2.85 2.75c-.3.3-.54.54-1.1.54l.39-5.4L18.7 6.7c.46-.39-.1-.61-.72-.22L6.2 12.7 2.7 11.6c-1.2-.38-1.2-1.2.26-1.8L21.5 3.3z" fill="#fff"></path>
+          </svg>
+          <span class="label">Join Telegram</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-wrap" id="mainWrap" style="padding-top: 8px;">
+    <div class="container" id="mainContent" role="main" style="display: block;">
+      <div class="content-divider" aria-hidden="true"></div>
+
+      <div id="pageLoader" class="loader hidden" aria-hidden="true">
+        <div style="text-align:center">
+          <div class="loader-spinner" role="status" aria-label="Loading"></div>
+        </div>
+      </div>
+
+      <div id="errorMessage" class="error-message" role="status" aria-live="polite" style="display: none;">
+        <h2>Invalid or Missing ID</h2>
+        <p>Please provide a valid match ID in the URL (for example <code>?id=1</code>)</p>
+        <p>Visit our Telegram channel for valid links.</p>
+      </div>
+
+      <div class="match-select" style="display:none">
+        <label for="matchSelect">Select Match:</label>
+        <select id="matchSelect">
+          <option value="1">Match 1</option>
+          <option value="2">Match 2</option>
+        </select>
+      </div>
+
+      <div id="player" aria-label="Video player" style="display: block;"><iframe src="https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" loading="lazy" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen; geolocation; web-share; speaker-selection; screen-wake-lock; idle-detection" allowfullscreen="" style="width: 100%; height: 100%; border: none; border-radius: 12px;"></iframe></div>
+
+      <div class="language-buttons" role="tablist" aria-label="Available audio / streams" style="display: grid;"><button class="lang-btn active">HINDI</button><button class="lang-btn">WILLOW SD</button><button class="lang-btn">WILLOW FHD</button></div>
+    </div>
+  </div>
+
+  <div style="max-width:var(--max-width);width:100%;margin:10px auto;display:flex;justify-content:center;">
+    <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer" style="padding:12px 20px;">
+      <img src="cdn.jsdelivr.net/npm/simple_icons_v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
+      Join Telegram Channel
+    </a>
+  </div>
+
+  <div id="skpop" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModal" style="float:right;background:none;border:none;font-size:20px;cursor:pointer" aria-label="Close">×</button>
+      <h3 id="modalTitle">Join Our Telegram Channel! 📢</h3>
+      <p>Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
+        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer">🚀 Join Now</button>
+        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer">✅ Already Joined</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- External scripts (players) -->
+  <script src="ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script src="cdn.jsdelivr.net/npm/hls.js_1"></script>
+  <script src="cdn.jsdelivr.net/npm/dplayer_1.26.0/dist/dplayer.min.js"></script>
+  <script src="cdnjs.cloudflare.com/ajax/libs/shaka_player/4.16.3/shaka_player.ui.js" crossorigin="anonymous"></script>
+
+  
+
+  
+
+<div id="m3u8Layer" style="display: none;"><!-- overlay.html -->
+<div id="m3u8OverlayDiv" class="overlayDiv" style="display: inline; left: 0px;"> 
+    <span id="titleSpan" class="titleSpan" style="padding-left:6px;">
+        <a id="titleM3u8Link" target="_self" href="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="m3u8Link" title="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8">
+            <span id="titleText">m3u8 Sniffer</span>
+            <span style="padding-right:3px;">[<span id="tabM3u8Count">3</span>]</span></a></span>
+    
+    <span id="m3u8LinkSpan" style="display: inline;" title="Show First / Last m3u8 video link (Alt Shift F / L)">
+        <select id="showFirstLast" class="overlayDD">
+            <option class="overlayDD" value="first" selected="">First</option>
+            <option class="overlayDD" value="last">Last</option>
+        </select>&nbsp;
+        <a id="m3u8Link" target="_self" href="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="m3u8Link" title="Click or right click to open the m3u8 URL (Alt Enter)">
+            <span id="m3u8LinkText" class="m3u8Link">https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8</span>
+        </a>&nbsp;
+    </span>
+    <span class="buttonsSpan noWrap" style="white-space:nowrap;">
+        <span id="m3u8HideSpan" style="margin-left:2px;margin-right:0px;">
+            <span id="m3u8HideButton" class="olButton" title="Shrink the overlay to the upper right corner (Alt &lt;)" style="display: inline;">
+                &nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;
+            </span>
+        </span>
+        <span id="m3u8ExpandOverlay" class="olButton noWrap" title="Expand to show full overlay details (Alt +)" style="display: none;">
+            &nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
+        </span>
+        <span id="m3u8CopyButton" class="olButton noWrap" title="Copy the m3u8 URL to the clipboard (Alt C)">
+            &nbsp;&nbsp;Copy&nbsp;
+        </span>
+<!--
+        <span id="m3u8PlayButton" class="olButton noWrap"
+            title="Play the m3u8 video in the current tab (Alt P)">
+            &nbsp;&nbsp;Play&nbsp;
+        </span>
+-->
+        <span id="m3u8PlayButton" class="olButton noWrap" title="Play the m3u8 video in the current tab (Alt P, can use Ctrl or Shift for new tab/window)">
+            <a id="m3u8PlayLink" href="chrome-extension://akkncdpkjlfanomlnpmmolafofpnpjgn/player/player.html?site=https://skcricweb.pages.dev/ipel#https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="cssbutton" style="color:white;text-decoration:none;">
+                &nbsp;&nbsp;Play&nbsp;
+            </a>
+        </span>
+        <span id="m3u8CloseButton" class="olButton hoverRed noWrap" title="Close the m3u8 overlay for this page (Alt X)">
+            &nbsp;&nbsp;X&nbsp;&nbsp;</span><span id="m3u8HideRightButton" class="olButton noWrap" title="Shrink the overlay to the upper right corner (Alt &gt;)" style="display: inline;">
+            &nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;
+        </span>
+    </span><br>
+</div>
+</div><script src="js/inline_scripts.js"></script></body></html>
