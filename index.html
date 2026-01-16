@@ -7,8 +7,11 @@
   <meta name="referrer" content="no-referrer">
   <title>CineArena.Live</title>
 
-  <!-- External Libraries -->
+  <!-- External player CSS -->
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.css">
+  
+  <!-- Shaka Player CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.css" crossorigin="anonymous">
 
   <!-- Responsive CSS with Sky Gradient Theme -->
@@ -17,13 +20,14 @@
       /* Sky Gradient Colors */
       --sky-light: #52A7E0;
       --sky-medium: #41B8F1;
+      --sky-dark: #2E9FCF;
       --sky-darker: #1E8BC3;
-      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-darker) 100%);
-      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-darker) 50%, #1E8BC3 100%);
+      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-dark) 100%);
+      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-dark) 50%, var(--sky-darker) 100%);
       
       /* Theme Colors */
       --primary-color: var(--sky-medium);
-      --secondary-color: var(--sky-darker);
+      --secondary-color: var(--sky-dark);
       --accent-color: #FFA726;
       --background-color: #0A1929;
       --surface-color: #132F4C;
@@ -37,10 +41,10 @@
       /* Spacing */
       --spacing-xs: 4px;
       --spacing-sm: 8px;
-      --spacing-md: 12px;
-      --spacing-lg: 16px;
-      --spacing-xl: 20px;
-      --spacing-xxl: 24px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-xxl: 48px;
     }
 
     * {
@@ -58,10 +62,9 @@
       background-image: 
         radial-gradient(circle at 20% 80%, rgba(82, 167, 224, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(65, 184, 241, 0.1) 0%, transparent 50%);
-      overflow-x: hidden;
     }
 
-    /* Header Styles - Mobile First */
+    /* Header Styles */
     #topHeader {
       background: var(--header-bg);
       backdrop-filter: blur(10px);
@@ -69,20 +72,20 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      padding: var(--spacing-xs) var(--spacing-sm);
     }
 
     .header-inner {
-      max-width: 100%;
+      max-width: 1400px;
       margin: 0 auto;
+      padding: var(--spacing-sm) var(--spacing-md);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: var(--spacing-sm);
+      gap: var(--spacing-md);
     }
 
     .logo {
-      font-size: 1.4rem;
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
       font-weight: 800;
       text-decoration: none;
       color: white;
@@ -93,28 +96,20 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      white-space: nowrap;
-      flex-shrink: 0;
     }
 
     .logo small {
-      font-size: 0.5em;
+      font-size: 0.6em;
       font-weight: 600;
       opacity: 0.8;
       margin-left: var(--spacing-xs);
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-    }
-
     .telegram-join {
       display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
       background: var(--sky-gradient);
       color: white;
       text-decoration: none;
@@ -123,7 +118,6 @@
       transition: var(--transition);
       border: 2px solid transparent;
       white-space: nowrap;
-      font-size: 0.9rem;
     }
 
     .telegram-join:hover {
@@ -133,170 +127,65 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .telegram-join svg {
-      width: 16px;
-      height: 16px;
-      flex-shrink: 0;
-    }
-
-    .telegram-join .label {
-      display: inline;
-    }
-
     /* Main Content */
     .main-wrap {
-      max-width: 100%;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: var(--spacing-sm);
-      min-height: calc(100vh - 70px);
-      display: flex;
-      flex-direction: column;
+      padding: var(--spacing-md);
     }
 
     .container {
       background: var(--surface-color);
-      border-radius: 12px;
-      padding: var(--spacing-md);
+      border-radius: 20px;
+      padding: var(--spacing-lg);
       box-shadow: var(--card-shadow);
       border: 1px solid rgba(65, 184, 241, 0.1);
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+      margin-bottom: var(--spacing-lg);
     }
 
-    /* Loader */
-    .loader {
-      text-align: center;
-      padding: var(--spacing-xxl) 0;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .loader-spinner {
-      width: 50px;
-      height: 50px;
-      border: 3px solid rgba(65, 184, 241, 0.2);
-      border-top-color: var(--sky-medium);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: var(--spacing-md);
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Player Container - RESPONSIVE HEIGHTS */
-    .player-container {
+    /* Player Area - IMPORTANT FIX */
+    #player {
       position: relative;
       width: 100%;
-      margin-bottom: var(--spacing-md);
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
       background: #000;
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
-      display: none;
-      /* Mobile first: smaller height */
-      height: 220px;
+      margin-bottom: var(--spacing-lg);
     }
 
-    /* Responsive height adjustments */
-    @media (min-width: 375px) {
-      .player-container {
-        height: 240px;
-      }
-    }
-
-    @media (min-width: 480px) {
-      .player-container {
-        height: 270px;
-      }
-    }
-
-    @media (min-width: 768px) {
-      .player-container {
-        height: 350px;
-      }
-    }
-
-    @media (min-width: 992px) {
-      .player-container {
-        height: 450px;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      .player-container {
-        height: 500px;
-      }
-    }
-
-    #player {
+    #player video {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: #000;
+      object-fit: contain;
     }
 
-    #player video,
-    #player iframe,
+    #player .plyr {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #player .dplayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
     #player .shaka-video-container {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      border: none;
-      background: #000;
-    }
-
-    /* Hide native controls */
-    video::-webkit-media-controls {
-      display: none !important;
-    }
-
-    /* Video placeholder */
-    .video-placeholder {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, rgba(10, 25, 41, 0.9), rgba(19, 47, 76, 0.9));
-      color: var(--text-color);
-      text-align: center;
-      padding: var(--spacing-md);
-      z-index: 1;
-    }
-
-    .video-placeholder svg {
-      width: 50px;
-      height: 50px;
-      margin-bottom: var(--spacing-sm);
-      fill: var(--sky-medium);
-      opacity: 0.5;
-    }
-
-    .video-placeholder h3 {
-      margin-bottom: var(--spacing-sm);
-      font-size: 1.1rem;
-      color: var(--sky-light);
-    }
-
-    .video-placeholder p {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      max-width: 280px;
-      line-height: 1.4;
     }
 
     .custom-shaka-spinner-container {
@@ -305,408 +194,153 @@
       left: 0;
       width: 100%;
       height: 100%;
-      display: none;
+      display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 10;
     }
 
     .custom-shaka-spinner {
-      width: 40px;
-      height: 40px;
-      border: 3px solid rgba(65, 184, 241, 0.2);
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(65, 184, 241, 0.2);
       border-top-color: var(--sky-medium);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
 
-    /* Category Tabs */
-    .category-tabs {
-      display: none;
-      gap: var(--spacing-xs);
-      margin-bottom: var(--spacing-md);
-      overflow-x: auto;
-      padding: var(--spacing-xs) 0;
-      scrollbar-width: thin;
-      scrollbar-color: var(--sky-medium) transparent;
-      flex-shrink: 0;
-      -webkit-overflow-scrolling: touch;
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    .category-tabs::-webkit-scrollbar {
-      height: 3px;
-    }
-
-    .category-tabs::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .category-tabs::-webkit-scrollbar-thumb {
-      background: var(--sky-medium);
-      border-radius: 1.5px;
-    }
-
-    .category-tab {
-      padding: 6px 12px;
-      background: rgba(65, 184, 241, 0.1);
-      border: 1px solid rgba(65, 184, 241, 0.3);
-      border-radius: 20px;
-      color: var(--text-color);
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-      flex-shrink: 0;
-      font-size: 0.85rem;
-      min-height: 36px;
-      display: flex;
-      align-items: center;
-    }
-
-    .category-tab:hover {
-      background: rgba(65, 184, 241, 0.2);
-      border-color: var(--sky-medium);
-    }
-
-    .category-tab.active {
-      background: var(--sky-gradient);
-      border-color: transparent;
-      color: white;
-    }
-
-    /* Stream Buttons */
-    .stream-buttons {
-      display: none;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    /* Language Buttons */
+    .language-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: var(--spacing-sm);
-      margin-top: var(--spacing-md);
-      flex-shrink: 0;
-      max-height: 180px;
-      overflow-y: auto;
-      padding-right: 4px;
+      margin-top: var(--spacing-lg);
     }
 
-    .stream-buttons::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    .stream-buttons::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    .stream-buttons::-webkit-scrollbar-thumb {
-      background: var(--sky-medium);
-      border-radius: 2px;
-    }
-
-    .stream-button {
-      padding: 8px 10px;
+    .language-buttons button {
+      padding: var(--spacing-md);
       background: rgba(65, 184, 241, 0.1);
-      border: 1px solid rgba(65, 184, 241, 0.3);
-      border-radius: 8px;
+      border: 2px solid rgba(65, 184, 241, 0.3);
+      border-radius: 10px;
       color: var(--text-color);
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       text-align: center;
-      position: relative;
-      overflow: hidden;
-      font-size: 0.85rem;
-      min-height: 50px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
     }
 
-    .stream-button:hover {
+    .language-buttons button:hover {
       background: rgba(65, 184, 241, 0.2);
       border-color: var(--sky-medium);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
     }
 
-    .stream-button.active {
-      background: var(--sky-gradient);
-      border-color: transparent;
-      color: white;
-      box-shadow: 0 4px 12px rgba(65, 184, 241, 0.3);
+    /* Loader and Error States */
+    .loader {
+      text-align: center;
+      padding: var(--spacing-xxl) 0;
     }
 
-    /* Stream badges */
-    .stream-badge {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      padding: 2px 6px;
-      border-radius: 3px;
-      font-size: 0.65rem;
-      font-weight: 600;
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(65, 184, 241, 0.2);
+      border-top-color: var(--sky-medium);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
     }
 
-    .badge-iframe {
-      background: rgba(66, 184, 241, 0.2);
-      border: 1px solid var(--sky-medium);
-      color: var(--sky-light);
-    }
-
-    .badge-mpd {
-      background: rgba(255, 167, 38, 0.2);
-      border: 1px solid var(--accent-color);
-      color: var(--accent-color);
-    }
-
-    .badge-hls {
-      background: rgba(76, 175, 80, 0.2);
-      border: 1px solid #4CAF50;
-      color: #4CAF50;
-    }
-
-    .badge-drm {
-      background: rgba(156, 39, 176, 0.2);
-      border: 1px solid #9C27B0;
-      color: #9C27B0;
-    }
-
-    /* Info Panel */
-    .info-panel {
-      background: rgba(65, 184, 241, 0.05);
-      border: 1px solid rgba(65, 184, 241, 0.1);
-      border-radius: 8px;
-      padding: var(--spacing-sm);
-      margin-top: var(--spacing-md);
-      display: none;
-      flex-shrink: 0;
-    }
-
-    .info-panel.visible {
-      display: block;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .info-panel h3 {
-      font-size: 0.95rem;
-      margin-bottom: 6px;
-    }
-
-    /* Error Message */
     .error-message {
       text-align: center;
-      padding: var(--spacing-lg) var(--spacing-md);
-      background: rgba(255, 107, 107, 0.1);
-      border: 1px solid rgba(255, 107, 107, 0.3);
-      border-radius: 8px;
-      margin: var(--spacing-md) 0;
-      flex-shrink: 0;
-      display: none;
+      padding: var(--spacing-xxl) var(--spacing-md);
     }
 
     .error-message h2 {
-      font-size: 1.2rem;
-      margin-bottom: var(--spacing-sm);
+      color: #FF6B6B;
+      margin-bottom: var(--spacing-md);
+      font-size: 1.8rem;
     }
 
-    /* Refresh Button */
-    .refresh-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: var(--sky-gradient);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
-      cursor: pointer;
-      display: flex;
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
-      z-index: 20;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      padding: var(--spacing-md);
+    }
+
+    .modal-content {
+      background: var(--surface-color);
+      border-radius: 20px;
+      padding: var(--spacing-xl);
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid rgba(65, 184, 241, 0.2);
+      position: relative;
+    }
+
+    #closeModal {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      color: var(--text-secondary);
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      border: none;
       transition: var(--transition);
-      display: none;
     }
 
-    .refresh-btn:hover {
-      transform: rotate(180deg);
-      background: var(--sky-gradient-hover);
-    }
-
-    .refresh-btn svg {
-      width: 18px;
-      height: 18px;
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 767px) {
-      .container {
-        padding: var(--spacing-sm);
-      }
-      
-      .stream-buttons {
-        gap: 6px;
-        max-height: 160px;
-      }
-      
-      @media (max-width: 360px) {
-        .stream-buttons {
-          grid-template-columns: 1fr;
-        }
-        
-        .player-container {
-          height: 200px;
-        }
-      }
-      
-      @media (max-height: 500px) and (orientation: landscape) {
-        .player-container {
-          height: 180px;
-        }
-        
-        .stream-buttons {
-          max-height: 120px;
-        }
-        
-        .video-placeholder {
-          padding: var(--spacing-sm);
-        }
-        
-        .video-placeholder svg {
-          width: 40px;
-          height: 40px;
-          margin-bottom: 8px;
-        }
-        
-        .video-placeholder h3 {
-          font-size: 1rem;
-          margin-bottom: 4px;
-        }
-        
-        .video-placeholder p {
-          font-size: 0.8rem;
-          line-height: 1.3;
-        }
-      }
-    }
-
-    /* Tablet and Desktop */
-    @media (min-width: 768px) {
-      #topHeader {
-        padding: var(--spacing-sm) var(--spacing-md);
-      }
-      
-      .logo {
-        font-size: 1.5rem;
-      }
-      
-      .telegram-join {
-        padding: 6px 14px;
-        font-size: 0.95rem;
-      }
-      
-      .main-wrap {
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
         padding: var(--spacing-md);
       }
-      
+
+      .main-wrap {
+        padding: var(--spacing-sm);
+      }
+
       .container {
-        padding: var(--spacing-lg);
-        border-radius: 16px;
+        padding: var(--spacing-md);
       }
-      
-      .category-tab {
-        padding: 8px 16px;
-        font-size: 0.9rem;
+
+      #player {
+        padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
       }
-      
-      .stream-button {
-        padding: 10px 14px;
-        font-size: 0.9rem;
-        min-height: 60px;
-      }
-      
-      .stream-buttons {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        max-height: 200px;
-      }
-      
-      .refresh-btn {
-        width: 40px;
-        height: 40px;
-      }
-      
-      .refresh-btn svg {
-        width: 20px;
-        height: 20px;
+
+      .language-buttons {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (min-width: 992px) {
-      #topHeader {
-        padding: var(--spacing-sm) 40px;
+    @media (max-width: 480px) {
+      #player {
+        padding-bottom: 100%; /* 1:1 aspect ratio for very small screens */
       }
-      
-      .header-inner {
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      
-      .logo {
-        font-size: 1.8rem;
-      }
-      
-      .telegram-join {
-        padding: 8px 20px;
-        font-size: 1rem;
-      }
-      
-      .main-wrap {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: var(--spacing-lg);
-        padding-top: var(--spacing-md);
-      }
-      
-      .container {
-        padding: var(--spacing-xl);
-        border-radius: 20px;
-        gap: var(--spacing-md);
-      }
-      
-      .category-tabs {
-        margin-bottom: var(--spacing-lg);
-      }
-      
-      .category-tab {
-        padding: 10px 20px;
-        font-size: 1rem;
-      }
-      
-      .stream-buttons {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: var(--spacing-md);
-        margin-top: var(--spacing-lg);
-        max-height: 250px;
-      }
-      
-      .stream-button {
-        padding: 12px 16px;
-        font-size: 1rem;
-        border-radius: 10px;
-      }
-      
-      .bottom-cta {
-        margin: var(--spacing-md) 0;
-      }
-      
-      .bottom-cta .telegram-join {
-        padding: 10px 24px;
-        font-size: 1rem;
-      }
+    }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      max-width: 1400px;
+      margin: var(--spacing-lg) auto;
+      padding: 0 var(--spacing-md);
+      text-align: center;
     }
 
     /* Utility Classes */
@@ -716,30 +350,6 @@
 
     .visible {
       display: block !important;
-    }
-    
-    .flex {
-      display: flex !important;
-    }
-    
-    /* Touch device optimizations */
-    @media (hover: none) and (pointer: coarse) {
-      .stream-button:hover {
-        transform: none;
-      }
-      
-      .telegram-join:hover {
-        transform: none;
-      }
-      
-      .category-tab:hover {
-        background: rgba(65, 184, 241, 0.1);
-      }
-      
-      .stream-button:active {
-        background: rgba(65, 184, 241, 0.2);
-        transform: scale(0.98);
-      }
     }
   </style>
 </head>
@@ -761,791 +371,242 @@
 
   <div class="main-wrap" id="mainWrap">
     <div class="container" id="mainContent" role="main">
-      <!-- Loader -->
       <div id="pageLoader" class="loader">
-        <div class="loader-spinner"></div>
-        <p>Loading Streams...</p>
-      </div>
-
-      <!-- Refresh Button -->
-      <button id="refreshBtn" class="refresh-btn" title="Refresh streams">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-        </svg>
-      </button>
-
-      <!-- Category Tabs -->
-      <div class="category-tabs" id="categoryTabs"></div>
-
-      <!-- Player Area -->
-      <div class="player-container" id="playerContainer">
-        <div id="player">
-          <!-- Video placeholder -->
-          <div class="video-placeholder" id="videoPlaceholder">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
-            </svg>
-            <h3>Select a Stream</h3>
-            <p>Choose a category and select a stream to start watching</p>
-          </div>
-          <!-- Loading spinner -->
-          <div class="custom-shaka-spinner-container" id="customSpinner">
-            <div class="custom-shaka-spinner"></div>
-            <div style="color: white; margin-top: 50px; position: absolute; font-size: 0.9rem;">Loading stream...</div>
-          </div>
+        <div style="text-align:center">
+          <div class="loader-spinner" role="status" aria-label="Loading"></div>
+          <p style="margin-top: 20px;">Loading player...</p>
         </div>
       </div>
 
-      <!-- Stream Buttons -->
-      <div class="stream-buttons" id="streamButtons"></div>
-
-      <!-- Info Panel -->
-      <div class="info-panel" id="infoPanel">
-        <h3>Stream Information</h3>
-        <div id="streamInfo" style="font-size: 0.85rem;"></div>
+      <div id="errorMessage" class="error-message hidden" role="status" aria-live="polite">
+        <h2>Invalid or Missing ID</h2>
+        <p>Please provide a valid match ID in the URL (for example <code>?id=1</code>)</p>
+        <p>Visit our Telegram channel for valid links.</p>
       </div>
 
-      <!-- Error Message -->
-      <div id="errorMessage" class="error-message" role="status" aria-live="polite">
-        <h2>Unable to Load Streams</h2>
-        <p style="font-size: 0.9rem;">Failed to load streams from server. Please try again later.</p>
-        <button id="retryBtn" style="margin-top: 10px; padding: 8px 16px; background: var(--sky-gradient); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
-          Retry Loading
-        </button>
+      <div id="player" aria-label="Video player">
+        <div class="custom-shaka-spinner-container" id="customSpinner" aria-hidden="true">
+          <div class="custom-shaka-spinner" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="language-buttons" id="languageButtons" role="tablist" aria-label="Available audio / streams" style="display: none;"></div>
+    </div>
+  </div>
+
+  <div class="bottom-cta">
+    <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:20px;height:20px;margin-right:10px;">
+      Join Telegram Channel
+    </a>
+  </div>
+
+  <div id="skpop" class="modal hidden" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button id="closeModal" aria-label="Close">×</button>
+      <h3 id="modalTitle">Join Our Telegram Channel! 📢</h3>
+      <p>Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
+      <div class="modal-buttons" style="display:flex;gap:10px;margin-top:12px">
+        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer">🚀 Join Now</button>
+        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer">✅ Already Joined</button>
       </div>
     </div>
   </div>
 
-  <!-- Bottom CTA -->
-  <div class="bottom-cta">
-    <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
-      Join Telegram Channel for Updates
-    </a>
-  </div>
-
-  <!-- External Libraries -->
+  <!-- External scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
 
-  <!-- Main Application Script -->
+  <!-- Player initialization script -->
   <script>
+    // Wait for DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('CineArena Multi-Stream Player Initializing...');
+      console.log('DOM loaded, initializing player...');
       
-      // DOM Elements
+      const playerContainer = document.getElementById('player');
       const pageLoader = document.getElementById('pageLoader');
-      const categoryTabs = document.getElementById('categoryTabs');
-      const playerContainer = document.getElementById('playerContainer');
-      const player = document.getElementById('player');
-      const videoPlaceholder = document.getElementById('videoPlaceholder');
-      const streamButtons = document.getElementById('streamButtons');
-      const infoPanel = document.getElementById('infoPanel');
-      const streamInfo = document.getElementById('streamInfo');
       const errorMessage = document.getElementById('errorMessage');
-      const customSpinner = document.getElementById('customSpinner');
-      const refreshBtn = document.getElementById('refreshBtn');
-      const retryBtn = document.getElementById('retryBtn');
+      const languageButtons = document.getElementById('languageButtons');
       
-      // Configuration
-      const CONFIG = {
-        jsonUrl: 'https://raw.githubusercontent.com/cinearena/json/refs/heads/main/ipl.json', // Your JSON URL
-        cacheTime: 10 * 60 * 1000, // 10 minutes cache
-        retryCount: 3,
-        retryDelay: 2000
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const streamId = urlParams.get('id');
+      
+      // Stream sources (you can replace these with your actual stream URLs)
+      const streamSources = {
+        '1': 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
+        '2': 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        '3': 'https://bitdash-a.akamaihd.net/s/content/media/sintel/hls/playlist.m3u8'
       };
       
-      // State variables
-      let streamsData = null;
-      let currentCategory = null;
-      let currentStream = null;
-      let currentPlayer = null;
-      let shakaPlayerInstance = null;
-      let hlsInstance = null;
-      let plyrInstance = null;
-      
-      // Initialize application
-      async function initializeApp() {
-        console.log('Fetching streams from:', CONFIG.jsonUrl);
-        await loadStreamsData();
-      }
-      
-      // Load streams data from JSON
-      async function loadStreamsData() {
+      function initializePlayer() {
         try {
-          showLoader();
+          // Hide loader
+          pageLoader.classList.add('hidden');
           
-          const data = await fetchWithRetry(CONFIG.jsonUrl, CONFIG.retryCount);
-          
-          if (data && typeof data === 'object') {
-            streamsData = data;
-            console.log('Successfully loaded streams:', Object.keys(streamsData));
-            
-            hideLoader();
-            initializeUI();
-            saveToLocalStorage(data);
-            
-            showNotification('Streams loaded successfully!', 'success');
-            
-          } else {
-            throw new Error('Invalid data format');
+          // Check if we have a valid stream ID
+          if (!streamId || !streamSources[streamId]) {
+            errorMessage.classList.remove('hidden');
+            playerContainer.style.display = 'none';
+            return;
           }
           
-        } catch (error) {
-          console.error('Failed to load streams:', error);
+          // Show player container
+          playerContainer.style.display = 'block';
           
-          // Try cache
-          const cachedData = loadFromLocalStorage();
-          if (cachedData) {
-            console.log('Using cached data');
-            streamsData = cachedData;
-            hideLoader();
-            initializeUI();
-            showNotification('Using cached data', 'warning');
-          } else {
-            // Use fallback data matching your format
-            streamsData = getFallbackData();
-            hideLoader();
-            initializeUI();
-            showNotification('Using fallback streams', 'error');
-          }
+          // Get stream URL
+          const streamUrl = streamSources[streamId];
+          console.log('Loading stream:', streamUrl);
           
-          showError('Failed to load latest streams. Using cached data.');
-        }
-      }
-      
-      // Fallback data matching your exact JSON format
-      function getFallbackData() {
-        return {
-          "wpl": {
-            "Jio-Hotstar [Hindi]": {
-              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-              "type": "iframe"
+          // Create video element
+          const videoElement = document.createElement('video');
+          videoElement.id = 'videoPlayer';
+          videoElement.setAttribute('playsinline', '');
+          videoElement.setAttribute('controls', '');
+          videoElement.setAttribute('preload', 'auto');
+          videoElement.style.width = '100%';
+          videoElement.style.height = '100%';
+          
+          // Create source element
+          const sourceElement = document.createElement('source');
+          sourceElement.src = streamUrl;
+          sourceElement.type = 'application/x-mpegURL';
+          
+          videoElement.appendChild(sourceElement);
+          playerContainer.appendChild(videoElement);
+          
+          // Initialize Plyr player
+          const player = new Plyr(videoElement, {
+            controls: [
+              'play-large',
+              'play',
+              'progress',
+              'current-time',
+              'duration',
+              'mute',
+              'volume',
+              'captions',
+              'settings',
+              'pip',
+              'airplay',
+              'fullscreen'
+            ],
+            ratio: '16:9',
+            autoplay: false,
+            muted: false,
+            clickToPlay: true,
+            storage: {
+              enabled: true,
+              key: 'cinearena-player'
             },
-            "Willow [iOS]": {
-              "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-              "type": "iframe"
-            }
-          },
-          "test": {
-            "Test Stream": {
-              "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "type": "iframe"
-            }
-          }
-        };
-      }
-      
-      // Fetch with retry
-      async function fetchWithRetry(url, retries) {
-        for (let i = 0; i < retries; i++) {
-          try {
-            console.log(`Fetch attempt ${i + 1}`);
-            
-            const cacheBuster = new Date().getTime();
-            const fetchUrl = `${url}?t=${cacheBuster}`;
-            
-            const response = await fetch(fetchUrl, {
-              headers: {
-                'Accept': 'application/json',
-                'Cache-Control': 'no-cache'
-              },
-              cache: 'no-cache',
-              mode: 'cors'
-            });
-            
-            if (!response.ok) {
-              throw new Error(`HTTP ${response.status}`);
-            }
-            
-            const data = await response.json();
-            return data;
-            
-          } catch (error) {
-            console.warn(`Attempt ${i + 1} failed:`, error.message);
-            
-            if (i < retries - 1) {
-              await new Promise(resolve => setTimeout(resolve, CONFIG.retryDelay));
-            } else {
-              throw error;
-            }
-          }
-        }
-      }
-      
-      // LocalStorage functions
-      function saveToLocalStorage(data) {
-        try {
-          const cacheData = {
-            data: data,
-            timestamp: new Date().getTime()
-          };
-          localStorage.setItem('cinearena_streams', JSON.stringify(cacheData));
-        } catch (error) {
-          console.warn('Failed to save to localStorage:', error);
-        }
-      }
-      
-      function loadFromLocalStorage() {
-        try {
-          const cached = localStorage.getItem('cinearena_streams');
-          if (!cached) return null;
-          
-          const cacheData = JSON.parse(cached);
-          const now = new Date().getTime();
-          
-          if (now - cacheData.timestamp < CONFIG.cacheTime) {
-            return cacheData.data;
-          }
-          
-          return null;
-        } catch (error) {
-          console.warn('Failed to load from localStorage:', error);
-          return null;
-        }
-      }
-      
-      // UI Helper functions
-      function showLoader() {
-        pageLoader.style.display = 'flex';
-        errorMessage.style.display = 'none';
-        playerContainer.style.display = 'none';
-        categoryTabs.style.display = 'none';
-        streamButtons.style.display = 'none';
-        refreshBtn.style.display = 'none';
-      }
-      
-      function hideLoader() {
-        pageLoader.style.display = 'none';
-      }
-      
-      function showError(message) {
-        errorMessage.style.display = 'block';
-        if (message) {
-          errorMessage.querySelector('p').textContent = message;
-        }
-      }
-      
-      function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.style.cssText = `
-          position: fixed;
-          top: 70px;
-          right: 10px;
-          padding: 12px 16px;
-          background: ${type === 'error' ? '#dc2626' : type === 'warning' ? '#f59e0b' : '#10b981'};
-          color: white;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-          z-index: 1001;
-          animation: slideIn 0.3s ease;
-          max-width: 300px;
-          font-size: 0.9rem;
-        `;
-        
-        notification.innerHTML = `
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <span>${message}</span>
-            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px; margin-left: 8px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
-          </div>
-        `;
-        
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-          if (notification.parentNode) {
-            notification.remove();
-          }
-        }, 4000);
-        
-        // Add animation
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-          }
-        `;
-        document.head.appendChild(style);
-      }
-      
-      // Initialize UI
-      function initializeUI() {
-        if (!streamsData || Object.keys(streamsData).length === 0) {
-          showError('No streams available. Please try again later.');
-          return;
-        }
-        
-        // Show UI elements
-        categoryTabs.style.display = 'flex';
-        playerContainer.style.display = 'block';
-        streamButtons.style.display = 'grid';
-        refreshBtn.style.display = 'flex';
-        errorMessage.style.display = 'none';
-        
-        // Create category tabs
-        createCategoryTabs();
-        
-        // Select first category
-        const firstCategory = Object.keys(streamsData)[0];
-        if (firstCategory) {
-          selectCategory(firstCategory);
-        }
-      }
-      
-      function createCategoryTabs() {
-        categoryTabs.innerHTML = '';
-        
-        Object.keys(streamsData).forEach(category => {
-          const tab = document.createElement('div');
-          tab.className = 'category-tab';
-          tab.textContent = category.toUpperCase();
-          tab.dataset.category = category;
-          
-          tab.addEventListener('click', () => {
-            selectCategory(category);
+            iconUrl: 'https://cdn.plyr.io/3.7.8/plyr.svg',
+            blankVideo: 'https://cdn.plyr.io/static/blank.mp4'
           });
           
-          categoryTabs.appendChild(tab);
-        });
-      }
-      
-      function selectCategory(category) {
-        // Update active tab
-        document.querySelectorAll('.category-tab').forEach(tab => {
-          tab.classList.remove('active');
-        });
-        document.querySelector(`[data-category="${category}"]`).classList.add('active');
-        
-        currentCategory = category;
-        createStreamButtons(category);
-        
-        infoPanel.style.display = 'none';
-        infoPanel.classList.remove('visible');
-        
-        videoPlaceholder.style.display = 'flex';
-        clearCurrentPlayer();
-      }
-      
-      function createStreamButtons(category) {
-        streamButtons.innerHTML = '';
-        const streams = streamsData[category];
-        
-        if (!streams) {
-          console.error('No streams found for category:', category);
-          return;
-        }
-        
-        Object.keys(streams).forEach(streamName => {
-          const stream = streams[streamName];
-          const button = document.createElement('div');
-          button.className = 'stream-button';
-          
-          // Get badge class based on stream type
-          const badgeClass = getBadgeClass(stream.type, stream.keyId);
-          
-          button.innerHTML = `
-            <div>${streamName}</div>
-            ${badgeClass ? `<span class="stream-badge ${badgeClass}">${stream.type.toUpperCase()}</span>` : ''}
-          `;
-          
-          button.addEventListener('click', (e) => {
-            selectStream(category, streamName, stream, e);
+          // Handle player events
+          player.on('ready', function(event) {
+            console.log('Player is ready');
+            document.getElementById('customSpinner').style.display = 'none';
+            
+            // Show language buttons if needed
+            languageButtons.style.display = 'grid';
+            createLanguageButtons();
           });
           
-          streamButtons.appendChild(button);
-        });
-      }
-      
-      function getBadgeClass(type, hasDrm) {
-        if (hasDrm) return 'badge-drm';
-        switch(type) {
-          case 'iframe': return 'badge-iframe';
-          case 'mpd-shaka': return 'badge-mpd';
-          case 'hls': return 'badge-hls';
-          default: return 'badge-iframe';
-        }
-      }
-      
-      async function selectStream(category, streamName, streamData, event) {
-        // Update active button
-        document.querySelectorAll('.stream-button').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        event.target.closest('.stream-button').classList.add('active');
-        
-        currentStream = { category, name: streamName, data: streamData };
-        
-        // Hide placeholder and show loading spinner
-        videoPlaceholder.style.display = 'none';
-        customSpinner.style.display = 'flex';
-        errorMessage.style.display = 'none';
-        
-        try {
-          await loadStream(streamData);
+          player.on('error', function(error) {
+            console.error('Player error:', error);
+            errorMessage.innerHTML = '<h2>Stream Error</h2><p>Unable to load the video stream. Please try another link.</p>';
+            errorMessage.classList.remove('hidden');
+          });
           
-          updateInfoPanel(category, streamName, streamData);
-          infoPanel.style.display = 'block';
-          infoPanel.classList.add('visible');
+          player.on('playing', function() {
+            console.log('Player started playing');
+          });
           
-          showNotification(`Playing: ${streamName}`, 'success');
+          // Also try to play on user interaction for autoplay policies
+          document.addEventListener('click', function() {
+            if (player.paused) {
+              player.play().catch(e => console.log('Autoplay prevented:', e));
+            }
+          }, { once: true });
           
         } catch (error) {
-          console.error('Error loading stream:', error);
-          showError(`Failed to load: ${streamName}. Try another stream.`);
-          customSpinner.style.display = 'none';
-          videoPlaceholder.style.display = 'flex';
+          console.error('Error initializing player:', error);
+          pageLoader.classList.add('hidden');
+          errorMessage.classList.remove('hidden');
+          errorMessage.innerHTML = '<h2>Player Error</h2><p>Failed to initialize video player. Please refresh the page.</p>';
         }
       }
       
-      async function loadStream(streamData) {
-        console.log('Loading stream type:', streamData.type, 'URL:', streamData.url);
+      function createLanguageButtons() {
+        const languages = [
+          { id: 'eng', name: 'English', code: 'EN' },
+          { id: 'spa', name: 'Spanish', code: 'ES' },
+          { id: 'hin', name: 'Hindi', code: 'HI' },
+          { id: 'ara', name: 'Arabic', code: 'AR' }
+        ];
         
-        clearCurrentPlayer();
+        languageButtons.innerHTML = '';
         
-        const streamType = streamData.type || 'iframe';
-        
-        switch(streamType) {
-          case 'iframe':
-            return loadIframeStream(streamData);
-            
-          case 'mpd-shaka':
-            return loadMpdShakaStream(streamData);
-            
-          case 'hls':
-            return loadHlsStream(streamData);
-            
-          default:
-            // Default to iframe
-            return loadIframeStream(streamData);
-        }
-      }
-      
-      // Load iframe stream
-      function loadIframeStream(streamData) {
-        return new Promise((resolve, reject) => {
-          try {
-            const iframe = document.createElement('iframe');
-            iframe.id = 'streamIframe';
-            iframe.src = streamData.url;
-            iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
-            iframe.allowFullscreen = true;
-            iframe.style.cssText = `
-              width: 100%;
-              height: 100%;
-              border: none;
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: 2;
-            `;
-            
-            iframe.setAttribute('referrerpolicy', 'no-referrer');
-            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
-            
-            iframe.onload = () => {
-              console.log('Iframe loaded successfully');
-              customSpinner.style.display = 'none';
-              currentPlayer = iframe;
-              resolve();
-            };
-            
-            iframe.onerror = () => {
-              console.error('Iframe failed to load');
-              reject(new Error('Iframe failed to load'));
-            };
-            
-            player.appendChild(iframe);
-            
-            // Fallback timeout
-            setTimeout(() => {
-              if (customSpinner.style.display === 'flex') {
-                console.log('Iframe load timeout');
-                customSpinner.style.display = 'none';
-                currentPlayer = iframe;
-                resolve();
-              }
-            }, 5000);
-            
-          } catch (error) {
-            console.error('Error creating iframe:', error);
-            reject(error);
-          }
-        });
-      }
-      
-      // Load MPD stream with Shaka Player
-      async function loadMpdShakaStream(streamData) {
-        return new Promise(async (resolve, reject) => {
-          try {
-            // Check if Shaka Player is available
-            if (!window.shaka) {
-              throw new Error('Shaka Player not loaded');
-            }
-            
-            // Create video element
-            const video = document.createElement('video');
-            video.id = 'shaka-video';
-            video.style.cssText = `
-              width: 100%;
-              height: 100%;
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: 2;
-            `;
-            
-            player.appendChild(video);
-            
-            // Initialize Shaka Player
-            shaka.polyfill.installAll();
-            
-            const playerInstance = new shaka.Player(video);
-            shakaPlayerInstance = playerInstance;
-            
-            // Listen for error events
-            playerInstance.addEventListener('error', (error) => {
-              console.error('Shaka Player error:', error);
-              reject(new Error('Shaka Player error'));
+        languages.forEach(lang => {
+          const button = document.createElement('button');
+          button.textContent = `${lang.name} (${lang.code})`;
+          button.setAttribute('data-lang', lang.id);
+          button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            document.querySelectorAll('.language-buttons button').forEach(btn => {
+              btn.classList.remove('active');
             });
-            
-            // Configure for DASH
-            playerInstance.configure({
-              drm: {
-                clearKeys: {}
-              },
-              streaming: {
-                bufferingGoal: 30,
-                rebufferingGoal: 2,
-                bufferBehind: 30
-              }
-            });
-            
-            // Add DRM keys if provided
-            if (streamData.keyId && streamData.key) {
-              playerInstance.configure({
-                drm: {
-                  clearKeys: {
-                    [streamData.keyId]: streamData.key
-                  }
-                }
-              });
-            }
-            
-            // Load the stream
-            await playerInstance.load(streamData.url);
-            
-            // Configure Plyr for UI controls
-            plyrInstance = new Plyr(video, {
-              controls: [
-                'play-large',
-                'play',
-                'progress',
-                'current-time',
-                'mute',
-                'volume',
-                'settings',
-                'fullscreen'
-              ],
-              settings: ['quality', 'speed'],
-              autoplay: true
-            });
-            
-            customSpinner.style.display = 'none';
-            currentPlayer = playerInstance;
-            resolve();
-            
-          } catch (error) {
-            console.error('Error loading MPD stream:', error);
-            reject(error);
-          }
+            // Add active class to clicked button
+            this.classList.add('active');
+            console.log(`Selected language: ${lang.name}`);
+            // Here you would typically switch the stream based on language
+          });
+          languageButtons.appendChild(button);
         });
-      }
-      
-      // Load HLS stream
-      async function loadHlsStream(streamData) {
-        return new Promise((resolve, reject) => {
-          try {
-            // Create video element
-            const video = document.createElement('video');
-            video.id = 'hls-video';
-            video.style.cssText = `
-              width: 100%;
-              height: 100%;
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: 2;
-            `;
-            
-            player.appendChild(video);
-            
-            // Check if HLS.js is available
-            if (window.Hls && Hls.isSupported()) {
-              // Use HLS.js
-              const hls = new Hls({
-                enableWorker: true,
-                lowLatencyMode: true,
-                backBufferLength: 90
-              });
-              
-              hlsInstance = hls;
-              
-              hls.loadSource(streamData.url);
-              hls.attachMedia(video);
-              
-              hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                video.play();
-              });
-              
-              hls.on(Hls.Events.ERROR, (event, data) => {
-                console.error('HLS error:', data);
-                if (data.fatal) {
-                  reject(new Error('HLS fatal error'));
-                }
-              });
-              
-              // Configure Plyr for UI controls
-              plyrInstance = new Plyr(video, {
-                controls: [
-                  'play-large',
-                  'play',
-                  'progress',
-                  'current-time',
-                  'mute',
-                  'volume',
-                  'settings',
-                  'fullscreen'
-                ],
-                settings: ['quality', 'speed'],
-                autoplay: true
-              });
-              
-            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-              // Native HLS support (Safari, iOS)
-              video.src = streamData.url;
-              video.addEventListener('loadedmetadata', () => {
-                video.play();
-              });
-              
-              // Configure Plyr for UI controls
-              plyrInstance = new Plyr(video, {
-                controls: [
-                  'play-large',
-                  'play',
-                  'progress',
-                  'current-time',
-                  'mute',
-                  'volume',
-                  'settings',
-                  'fullscreen'
-                ],
-                settings: ['quality', 'speed'],
-                autoplay: true
-              });
-              
-            } else {
-              throw new Error('HLS not supported');
-            }
-            
-            customSpinner.style.display = 'none';
-            currentPlayer = video;
-            resolve();
-            
-          } catch (error) {
-            console.error('Error loading HLS stream:', error);
-            reject(error);
-          }
-        });
-      }
-      
-      // Clear current player
-      function clearCurrentPlayer() {
-        // Clear iframe
-        const iframes = player.querySelectorAll('iframe');
-        iframes.forEach(iframe => iframe.remove());
         
-        // Clear video elements
-        const videos = player.querySelectorAll('video');
-        videos.forEach(video => video.remove());
-        
-        // Destroy Shaka Player if exists
-        if (shakaPlayerInstance) {
-          try {
-            shakaPlayerInstance.destroy();
-          } catch (e) {
-            console.warn('Error destroying Shaka Player:', e);
-          }
-          shakaPlayerInstance = null;
+        // Activate first language by default
+        if (languageButtons.firstChild) {
+          languageButtons.firstChild.classList.add('active');
         }
-        
-        // Destroy HLS instance if exists
-        if (hlsInstance) {
-          try {
-            hlsInstance.destroy();
-          } catch (e) {
-            console.warn('Error destroying HLS instance:', e);
-          }
-          hlsInstance = null;
-        }
-        
-        // Destroy Plyr instance if exists
-        if (plyrInstance) {
-          try {
-            plyrInstance.destroy();
-          } catch (e) {
-            console.warn('Error destroying Plyr instance:', e);
-          }
-          plyrInstance = null;
-        }
-        
-        currentPlayer = null;
       }
       
-      // Update info panel
-      function updateInfoPanel(category, streamName, streamData) {
-        const now = new Date();
-        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        const infoHTML = `
-          <p><strong>Category:</strong> ${category}</p>
-          <p><strong>Stream:</strong> ${streamName}</p>
-          <p><strong>Type:</strong> ${streamData.type || 'iframe'}</p>
-          <p><strong>DRM:</strong> ${streamData.keyId ? 'Yes' : 'No'}</p>
-          <p><strong>Status:</strong> <span style="color:#4ade80;">● Live</span></p>
-          <p><strong>Time:</strong> ${timeString}</p>
-        `;
-        
-        streamInfo.innerHTML = infoHTML;
-      }
+      // Simulate loading delay and initialize player
+      setTimeout(initializePlayer, 1000);
       
-      // Event Listeners
-      refreshBtn.addEventListener('click', async () => {
-        console.log('Refreshing streams...');
-        showNotification('Refreshing streams...', 'info');
-        await loadStreamsData();
+      // Modal functionality
+      const modal = document.getElementById('skpop');
+      const closeModal = document.getElementById('closeModal');
+      const joinChannel = document.getElementById('joinChannel');
+      const alreadyJoined = document.getElementById('alreadyJoined');
+      
+      // Show modal after 5 seconds
+      setTimeout(() => {
+        modal.classList.remove('hidden');
+      }, 5000);
+      
+      closeModal.addEventListener('click', () => {
+        modal.classList.add('hidden');
       });
       
-      if (retryBtn) {
-        retryBtn.addEventListener('click', async () => {
-          console.log('Retrying...');
-          showNotification('Retrying to load streams...', 'info');
-          await loadStreamsData();
-        });
-      }
+      joinChannel.addEventListener('click', () => {
+        window.open('https://t.me/cine_arena', '_blank');
+        modal.classList.add('hidden');
+      });
       
-      // Start the application
-      initializeApp();
+      alreadyJoined.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
       
-      // Auto-refresh every 15 minutes
-      setInterval(async () => {
-        if (document.visibilityState === 'visible') {
-          console.log('Auto-refreshing streams...');
-          await loadStreamsData();
+      // Close modal when clicking outside
+      window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          modal.classList.add('hidden');
         }
-      }, 15 * 60 * 1000);
+      });
     });
   </script>
 </body>
