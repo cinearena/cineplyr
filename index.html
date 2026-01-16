@@ -143,7 +143,13 @@
       margin-bottom: var(--spacing-lg);
     }
 
-    /* Player Area - IMPORTANT FIX */
+    /* Player Container */
+    .player-container {
+      position: relative;
+      width: 100%;
+      margin-bottom: var(--spacing-lg);
+    }
+
     #player {
       position: relative;
       width: 100%;
@@ -152,40 +158,17 @@
       background: #000;
       border-radius: 12px;
       overflow: hidden;
-      margin-bottom: var(--spacing-lg);
     }
 
-    #player video {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    #player .plyr {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    #player .dplayer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
+    #player video,
+    #player iframe,
     #player .shaka-video-container {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
+      border: none;
     }
 
     .custom-shaka-spinner-container {
@@ -214,30 +197,131 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Language Buttons */
-    .language-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    /* Category Tabs */
+    .category-tabs {
+      display: flex;
       gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-lg);
+      overflow-x: auto;
+      padding: var(--spacing-sm) 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--sky-medium) transparent;
+    }
+
+    .category-tabs::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .category-tabs::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .category-tabs::-webkit-scrollbar-thumb {
+      background: var(--sky-medium);
+      border-radius: 3px;
+    }
+
+    .category-tab {
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: rgba(65, 184, 241, 0.1);
+      border: 2px solid rgba(65, 184, 241, 0.3);
+      border-radius: 50px;
+      color: var(--text-color);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .category-tab:hover {
+      background: rgba(65, 184, 241, 0.2);
+      border-color: var(--sky-medium);
+      transform: translateY(-2px);
+    }
+
+    .category-tab.active {
+      background: var(--sky-gradient);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* Stream Buttons */
+    .stream-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: var(--spacing-md);
       margin-top: var(--spacing-lg);
     }
 
-    .language-buttons button {
+    .stream-button {
       padding: var(--spacing-md);
       background: rgba(65, 184, 241, 0.1);
       border: 2px solid rgba(65, 184, 241, 0.3);
-      border-radius: 10px;
+      border-radius: 12px;
       color: var(--text-color);
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
-    .language-buttons button:hover {
+    .stream-button:hover {
       background: rgba(65, 184, 241, 0.2);
       border-color: var(--sky-medium);
       transform: translateY(-2px);
+    }
+
+    .stream-button.active {
+      background: var(--sky-gradient);
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 20px rgba(65, 184, 241, 0.3);
+    }
+
+    .stream-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 2px 8px;
+      background: rgba(255, 167, 38, 0.2);
+      border: 1px solid var(--accent-color);
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: var(--accent-color);
+    }
+
+    /* Stream Type Indicators */
+    .stream-type {
+      display: inline-block;
+      padding: 2px 8px;
+      background: rgba(82, 167, 224, 0.2);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      margin-top: var(--spacing-xs);
+      color: var(--sky-light);
+    }
+
+    /* Info Panel */
+    .info-panel {
+      background: rgba(65, 184, 241, 0.05);
+      border: 1px solid rgba(65, 184, 241, 0.1);
+      border-radius: 12px;
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+      display: none;
+    }
+
+    .info-panel.visible {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Loader and Error States */
@@ -259,6 +343,10 @@
     .error-message {
       text-align: center;
       padding: var(--spacing-xxl) var(--spacing-md);
+      background: rgba(255, 107, 107, 0.1);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 12px;
+      margin: var(--spacing-lg) 0;
     }
 
     .error-message h2 {
@@ -321,17 +409,27 @@
       }
 
       #player {
-        padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
+        padding-bottom: 56.25%;
       }
 
-      .language-buttons {
+      .stream-buttons {
         grid-template-columns: 1fr;
+      }
+
+      .category-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
       }
     }
 
     @media (max-width: 480px) {
-      #player {
-        padding-bottom: 100%; /* 1:1 aspect ratio for very small screens */
+      .stream-button {
+        padding: var(--spacing-sm);
+      }
+      
+      .category-tab {
+        padding: var(--spacing-xs) var(--spacing-md);
+        font-size: 0.9rem;
       }
     }
 
@@ -371,26 +469,33 @@
 
   <div class="main-wrap" id="mainWrap">
     <div class="container" id="mainContent" role="main">
-      <div id="pageLoader" class="loader">
-        <div style="text-align:center">
-          <div class="loader-spinner" role="status" aria-label="Loading"></div>
-          <p style="margin-top: 20px;">Loading player...</p>
+      <!-- Category Tabs -->
+      <div class="category-tabs" id="categoryTabs"></div>
+
+      <!-- Player Area -->
+      <div class="player-container">
+        <div id="player">
+          <div class="custom-shaka-spinner-container" id="customSpinner">
+            <div class="custom-shaka-spinner"></div>
+            <div style="color: white; margin-top: 80px; position: absolute;">Loading stream...</div>
+          </div>
         </div>
       </div>
 
+      <!-- Stream Buttons -->
+      <div class="stream-buttons" id="streamButtons"></div>
+
+      <!-- Info Panel -->
+      <div class="info-panel" id="infoPanel">
+        <h3>Stream Information</h3>
+        <div id="streamInfo"></div>
+      </div>
+
+      <!-- Error Message -->
       <div id="errorMessage" class="error-message hidden" role="status" aria-live="polite">
-        <h2>Invalid or Missing ID</h2>
-        <p>Please provide a valid match ID in the URL (for example <code>?id=1</code>)</p>
-        <p>Visit our Telegram channel for valid links.</p>
+        <h2>Unable to Load Stream</h2>
+        <p>Please try selecting a different stream or check your connection.</p>
       </div>
-
-      <div id="player" aria-label="Video player">
-        <div class="custom-shaka-spinner-container" id="customSpinner" aria-hidden="true">
-          <div class="custom-shaka-spinner" aria-hidden="true"></div>
-        </div>
-      </div>
-
-      <div class="language-buttons" id="languageButtons" role="tablist" aria-label="Available audio / streams" style="display: none;"></div>
     </div>
   </div>
 
@@ -401,18 +506,6 @@
     </a>
   </div>
 
-  <div id="skpop" class="modal hidden" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button id="closeModal" aria-label="Close">×</button>
-      <h3 id="modalTitle">Join Our Telegram Channel! 📢</h3>
-      <p>Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
-      <div class="modal-buttons" style="display:flex;gap:10px;margin-top:12px">
-        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer">🚀 Join Now</button>
-        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer">✅ Already Joined</button>
-      </div>
-    </div>
-  </div>
-
   <!-- External scripts -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
@@ -420,162 +513,435 @@
   <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
 
-  <!-- Player initialization script -->
+  <!-- Main Application Script -->
   <script>
-    // Wait for DOM to be fully loaded
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM loaded, initializing player...');
+      console.log('CineArena Player Initializing...');
       
+      // DOM Elements
       const playerContainer = document.getElementById('player');
-      const pageLoader = document.getElementById('pageLoader');
+      const categoryTabs = document.getElementById('categoryTabs');
+      const streamButtons = document.getElementById('streamButtons');
+      const infoPanel = document.getElementById('infoPanel');
+      const streamInfo = document.getElementById('streamInfo');
       const errorMessage = document.getElementById('errorMessage');
-      const languageButtons = document.getElementById('languageButtons');
+      const customSpinner = document.getElementById('customSpinner');
       
-      // Get URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const streamId = urlParams.get('id');
-      
-      // Stream sources (you can replace these with your actual stream URLs)
-      const streamSources = {
-        '1': 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
-        '2': 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
-        '3': 'https://bitdash-a.akamaihd.net/s/content/media/sintel/hls/playlist.m3u8'
-      };
-      
-      function initializePlayer() {
-        try {
-          // Hide loader
-          pageLoader.classList.add('hidden');
-          
-          // Check if we have a valid stream ID
-          if (!streamId || !streamSources[streamId]) {
-            errorMessage.classList.remove('hidden');
-            playerContainer.style.display = 'none';
-            return;
+      // Your JSON data (can be loaded from external file)
+      const streamsData = {
+        "wpl": {
+          "Jio-Hotstar [Hindi]": {
+            "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
+            "type": "iframe"
+          },
+          "Willow [iOS]": {
+            "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+            "type": "iframe"
+          },
+          "WILLOW SD": {
+            "url": "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/sq3nwcl4j4/out/v1/41930b7349364099bb1b4ef153032937/cenc-sd.mpd",
+            "type": "mpd-shaka",
+            "keyId": "4ae41f5965180707b310360dc5060c09",
+            "key": "f78d1ba450f7ff87f215eb472cb4e17e"
+          }   
+        },
+        "u19": {
+          "Hindi": {
+            "url": "https://cinearena.github.io/id/sports.html?id=Star2HINDISD",
+            "type": "iframe",
+            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+            "key": "e620a970cea474c491ac78ae71a4d764"
+          },
+          "WILLOW": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/etebjbu25h/out/v1/935090e6afe6461594b16a907ce1c30b/cenc.mpd",
+            "type": "mpd-shaka",
+            "keyId": "98b8700f64cb7149fc4695c66b7d8687",
+            "key": "3f67576ea915c603c13aed959474bea8"
+          },
+          "PRIME": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash-sd/enc/khizze9pef/out/v1/89aee82791d94c9ea9eb181b74f9ec4e/cenc-sd.mpd",
+            "type": "mpd-shaka",
+            "keyId": "a7a854393efeeb6067fd79b0cf2bad85",
+            "key": "6bcbb19ef718eb4c965afa3a1f088f2f"
+          },
+          "Star Sports-2": {
+            "url": "https://cricketstan.github.io/Channel-14/",
+            "type": "iframe",
+            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+            "key": "e620a970cea474c491ac78ae71a4d764"
           }
-          
-          // Show player container
-          playerContainer.style.display = 'block';
-          
-          // Get stream URL
-          const streamUrl = streamSources[streamId];
-          console.log('Loading stream:', streamUrl);
-          
-          // Create video element
-          const videoElement = document.createElement('video');
-          videoElement.id = 'videoPlayer';
-          videoElement.setAttribute('playsinline', '');
-          videoElement.setAttribute('controls', '');
-          videoElement.setAttribute('preload', 'auto');
-          videoElement.style.width = '100%';
-          videoElement.style.height = '100%';
-          
-          // Create source element
-          const sourceElement = document.createElement('source');
-          sourceElement.src = streamUrl;
-          sourceElement.type = 'application/x-mpegURL';
-          
-          videoElement.appendChild(sourceElement);
-          playerContainer.appendChild(videoElement);
-          
-          // Initialize Plyr player
-          const player = new Plyr(videoElement, {
-            controls: [
-              'play-large',
-              'play',
-              'progress',
-              'current-time',
-              'duration',
-              'mute',
-              'volume',
-              'captions',
-              'settings',
-              'pip',
-              'airplay',
-              'fullscreen'
-            ],
-            ratio: '16:9',
-            autoplay: false,
-            muted: false,
-            clickToPlay: true,
-            storage: {
-              enabled: true,
-              key: 'cinearena-player'
-            },
-            iconUrl: 'https://cdn.plyr.io/3.7.8/plyr.svg',
-            blankVideo: 'https://cdn.plyr.io/static/blank.mp4'
-          });
-          
-          // Handle player events
-          player.on('ready', function(event) {
-            console.log('Player is ready');
-            document.getElementById('customSpinner').style.display = 'none';
-            
-            // Show language buttons if needed
-            languageButtons.style.display = 'grid';
-            createLanguageButtons();
-          });
-          
-          player.on('error', function(error) {
-            console.error('Player error:', error);
-            errorMessage.innerHTML = '<h2>Stream Error</h2><p>Unable to load the video stream. Please try another link.</p>';
-            errorMessage.classList.remove('hidden');
-          });
-          
-          player.on('playing', function() {
-            console.log('Player started playing');
-          });
-          
-          // Also try to play on user interaction for autoplay policies
-          document.addEventListener('click', function() {
-            if (player.paused) {
-              player.play().catch(e => console.log('Autoplay prevented:', e));
-            }
-          }, { once: true });
-          
-        } catch (error) {
-          console.error('Error initializing player:', error);
-          pageLoader.classList.add('hidden');
-          errorMessage.classList.remove('hidden');
-          errorMessage.innerHTML = '<h2>Player Error</h2><p>Failed to initialize video player. Please refresh the page.</p>';
+        },
+        "bbl": {
+          "WILLOW FHD": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/immypkxb41/out/v1/e1171079305c49d59de570bd64ca3e6c/cenc.mpd",
+            "type": "mpd-shaka",
+            "keyId": "c289847d4b541aa61780898dfb403560",
+            "key": "2182da5f65ee33e2b3bb32d82d19ce49"
+          },
+          "CRICLIFE": {
+            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
+            "type": "mpd-shaka",
+            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
+            "key": "bd085230b7b09e50954fe0af111a8a9f"
+          },
+          "Star Sports-2": {
+            "url": "https://cricketstan.github.io/Channel-14/",
+            "type": "iframe",
+            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+            "key": "e620a970cea474c491ac78ae71a4d764"
+          }
+        },
+        "criclife": {
+          "CricLife": {
+            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
+            "type": "mpd-shaka",
+            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
+            "key": "bd085230b7b09e50954fe0af111a8a9f"
+          }
+        },
+        "willow-fhd": {
+          "WILLOW FHD": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/8yefqdbchb/out/v1/8f25823809304e1a9d165a8305ca08e4/cenc.mpd",
+            "type": "mpd-shaka",
+            "keyId": "c5c42ff75cd4d0dd36979a32e6a433ef",
+            "key": "778d91970da4cfd11c8c727d667785b6"
+          }
+        },
+        "sa20": {
+          "Geo Super": {
+            "url": "https://ml-pull-dvc-myco.io:2096/GEO_SUPER/index.m3u8",
+            "type": "hls",
+            "keyId": "ce49fc405dd3c8a7783d8597fc1c68cd",
+            "key": "7022f11d572084a82fd0b883703ed1b5"
+          },
+          "CricLife": {
+            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
+            "type": "mpd-shaka",
+            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
+            "key": "bd085230b7b09e50954fe0af111a8a9f"
+          }
+        },
+        "indnz": {
+          "HINDI": {
+            "url": "https://allrounderlive.pages.dev/player?url=https://dillzy.cricketstream745.workers.dev/live.m3u8",
+            "type": "iframe",
+            "keyId": "192b1115da041585c77200128549efa1",
+            "key": "634e10efe4abbb14be400a3ccbac0258"
+          },
+          "CricLife": {
+            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
+            "type": "mpd-shaka",
+            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
+            "key": "bd085230b7b09e50954fe0af111a8a9f"
+          },
+          "WILLOW SD": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/vedlscjezi/out/v1/1a69808f3f44461ea89171d443225492/cenc-sd.mpd",
+            "type": "mpd-shaka",
+            "keyId": "5692feb4f680daf79dffe3497f469b79",
+            "key": "e358d00ea61053235c674b2ede952fcd"
+          },
+          "WILLOW FHD": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/ctipfgkjyw/out/v1/c934f6d404ad4a75bf9deb4142e66005/cenc.mpd",
+            "type": "mpd-shaka",
+            "keyId": "24bb1d301ddd62a816b2eba502f20c36",
+            "key": "3fbcde068cd0c81823db589fa8b21bca"
+          },
+          "Star Sports-2": {
+            "url": "https://cricketstan.github.io/Channel-14/",
+            "type": "iframe",
+            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+            "key": "e620a970cea474c491ac78ae71a4d764"
+          }
+        },
+        "willow": {
+          "WILLOW ADS FREE": {
+            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/njsiktakqy/out/v1/b25ec77dd6d547d68df6d07f165896ff/cenc.mpd",
+            "type": "mpd-shaka",
+            "keyId": "dd94299841023377b7302276118a971b",
+            "key": "b0e803fe7d4c136d0ba8eac091a032b7"
+          }
+        },
+        "willowios": {
+          "Willow [iOS]": {
+            "url": "https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+            "type": "hls"
+          }
         }
-      }
+      };
+
+      // State variables
+      let currentCategory = null;
+      let currentStream = null;
+      let currentPlayer = null;
       
-      function createLanguageButtons() {
-        const languages = [
-          { id: 'eng', name: 'English', code: 'EN' },
-          { id: 'spa', name: 'Spanish', code: 'ES' },
-          { id: 'hin', name: 'Hindi', code: 'HI' },
-          { id: 'ara', name: 'Arabic', code: 'AR' }
-        ];
+      // Initialize UI
+      function initializeUI() {
+        console.log('Initializing UI...');
         
-        languageButtons.innerHTML = '';
-        
-        languages.forEach(lang => {
-          const button = document.createElement('button');
-          button.textContent = `${lang.name} (${lang.code})`;
-          button.setAttribute('data-lang', lang.id);
-          button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            document.querySelectorAll('.language-buttons button').forEach(btn => {
-              btn.classList.remove('active');
-            });
-            // Add active class to clicked button
-            this.classList.add('active');
-            console.log(`Selected language: ${lang.name}`);
-            // Here you would typically switch the stream based on language
+        // Create category tabs
+        Object.keys(streamsData).forEach(category => {
+          const tab = document.createElement('div');
+          tab.className = 'category-tab';
+          tab.textContent = category.toUpperCase();
+          tab.dataset.category = category;
+          
+          tab.addEventListener('click', () => {
+            selectCategory(category);
           });
-          languageButtons.appendChild(button);
+          
+          categoryTabs.appendChild(tab);
         });
         
-        // Activate first language by default
-        if (languageButtons.firstChild) {
-          languageButtons.firstChild.classList.add('active');
+        // Select first category by default
+        const firstCategory = Object.keys(streamsData)[0];
+        if (firstCategory) {
+          selectCategory(firstCategory);
         }
       }
       
-      // Simulate loading delay and initialize player
-      setTimeout(initializePlayer, 1000);
+      // Select category
+      function selectCategory(category) {
+        console.log('Selecting category:', category);
+        
+        // Update active tab
+        document.querySelectorAll('.category-tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        document.querySelector(`[data-category="${category}"]`).classList.add('active');
+        
+        currentCategory = category;
+        
+        // Create stream buttons for this category
+        createStreamButtons(category);
+        
+        // Hide info panel
+        infoPanel.classList.remove('visible');
+        
+        // Clear player if no stream selected
+        clearPlayer();
+      }
+      
+      // Create stream buttons for category
+      function createStreamButtons(category) {
+        console.log('Creating stream buttons for:', category);
+        
+        streamButtons.innerHTML = '';
+        const streams = streamsData[category];
+        
+        Object.keys(streams).forEach(streamName => {
+          const stream = streams[streamName];
+          const button = document.createElement('div');
+          button.className = 'stream-button';
+          button.innerHTML = `
+            ${streamName}
+            <div class="stream-type">${stream.type}</div>
+            ${stream.keyId ? '<span class="stream-badge">DRM</span>' : ''}
+          `;
+          
+          button.addEventListener('click', () => {
+            selectStream(category, streamName, stream);
+          });
+          
+          streamButtons.appendChild(button);
+        });
+      }
+      
+      // Select stream
+      async function selectStream(category, streamName, streamData) {
+        console.log('Selecting stream:', streamName);
+        
+        // Update active button
+        document.querySelectorAll('.stream-button').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        event.target.closest('.stream-button').classList.add('active');
+        
+        currentStream = { category, name: streamName, data: streamData };
+        
+        // Show loading spinner
+        customSpinner.style.display = 'flex';
+        errorMessage.classList.add('hidden');
+        
+        // Load stream
+        try {
+          await loadStream(streamData);
+          
+          // Update info panel
+          updateInfoPanel(category, streamName, streamData);
+          infoPanel.classList.add('visible');
+        } catch (error) {
+          console.error('Error loading stream:', error);
+          errorMessage.classList.remove('hidden');
+          customSpinner.style.display = 'none';
+        }
+      }
+      
+      // Load stream based on type
+      async function loadStream(streamData) {
+        console.log('Loading stream type:', streamData.type);
+        
+        // Clear existing player
+        clearPlayer();
+        
+        switch(streamData.type) {
+          case 'iframe':
+            await loadIframeStream(streamData);
+            break;
+            
+          case 'mpd-shaka':
+            await loadMpdShakaStream(streamData);
+            break;
+            
+          case 'hls':
+            await loadHlsStream(streamData);
+            break;
+            
+          default:
+            throw new Error(`Unsupported stream type: ${streamData.type}`);
+        }
+        
+        // Hide spinner after a delay
+        setTimeout(() => {
+          customSpinner.style.display = 'none';
+        }, 1000);
+      }
+      
+      // Load iframe stream
+      function loadIframeStream(streamData) {
+        return new Promise((resolve) => {
+          const iframe = document.createElement('iframe');
+          iframe.src = streamData.url;
+          iframe.allow = 'autoplay; encrypted-media; fullscreen';
+          iframe.allowFullscreen = true;
+          
+          playerContainer.appendChild(iframe);
+          currentPlayer = iframe;
+          resolve();
+        });
+      }
+      
+      // Load MPD stream with Shaka Player
+      async function loadMpdShakaStream(streamData) {
+        // Check if Shaka Player is loaded
+        if (!window.shaka) {
+          throw new Error('Shaka Player not loaded');
+        }
+        
+        shaka.polyfill.installAll();
+        
+        const video = document.createElement('video');
+        video.id = 'shaka-video';
+        video.setAttribute('controls', '');
+        video.setAttribute('autoplay', '');
+        video.style.width = '100%';
+        video.style.height = '100%';
+        
+        playerContainer.appendChild(video);
+        
+        const player = new shaka.Player(video);
+        const ui = new shaka.ui.Overlay(player, playerContainer, video);
+        
+        // Configure DRM if keys are provided
+        if (streamData.keyId && streamData.key) {
+          const drmConfig = {
+            servers: {
+              'com.widevine.alpha': 'https://widevine-dash.ezdrm.com/proxy?pX=288FF5&user_id=MTAwMA=='
+            },
+            clearKeys: {
+              [streamData.keyId]: streamData.key
+            }
+          };
+          player.configure({
+            drm: drmConfig
+          });
+        }
+        
+        try {
+          await player.load(streamData.url);
+          currentPlayer = player;
+        } catch (error) {
+          console.error('Error loading MPD:', error);
+          throw error;
+        }
+      }
+      
+      // Load HLS stream with Plyr
+      async function loadHlsStream(streamData) {
+        const video = document.createElement('video');
+        video.id = 'hls-video';
+        video.setAttribute('controls', '');
+        video.setAttribute('autoplay', '');
+        video.style.width = '100%';
+        video.style.height = '100%';
+        
+        playerContainer.appendChild(video);
+        
+        // Check if HLS.js is available
+        if (window.Hls && Hls.isSupported()) {
+          const hls = new Hls();
+          hls.loadSource(streamData.url);
+          hls.attachMedia(video);
+          
+          hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            video.play();
+          });
+          
+          currentPlayer = hls;
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          // Native HLS support (Safari, iOS)
+          video.src = streamData.url;
+          video.addEventListener('loadedmetadata', () => {
+            video.play();
+          });
+          currentPlayer = video;
+        } else {
+          throw new Error('HLS not supported');
+        }
+      }
+      
+      // Clear current player
+      function clearPlayer() {
+        if (currentPlayer) {
+          if (currentPlayer instanceof shaka.Player) {
+            currentPlayer.destroy();
+          } else if (currentPlayer instanceof Hls) {
+            currentPlayer.destroy();
+          }
+          currentPlayer = null;
+        }
+        
+        // Remove all children from player container
+        while (playerContainer.firstChild) {
+          playerContainer.removeChild(playerContainer.firstChild);
+        }
+        
+        // Re-add spinner container
+        const newSpinner = document.createElement('div');
+        newSpinner.className = 'custom-shaka-spinner-container';
+        newSpinner.id = 'customSpinner';
+        newSpinner.style.display = 'none';
+        newSpinner.innerHTML = `
+          <div class="custom-shaka-spinner"></div>
+          <div style="color: white; margin-top: 80px; position: absolute;">Loading stream...</div>
+        `;
+        playerContainer.appendChild(newSpinner);
+      }
+      
+      // Update info panel
+      function updateInfoPanel(category, streamName, streamData) {
+        const infoHTML = `
+          <p><strong>Category:</strong> ${category.toUpperCase()}</p>
+          <p><strong>Stream:</strong> ${streamName}</p>
+          <p><strong>Type:</strong> ${streamData.type}</p>
+          <p><strong>URL:</strong> <small>${streamData.url.substring(0, 50)}...</small></p>
+          ${streamData.keyId ? `<p><strong>DRM:</strong> Enabled</p>` : ''}
+        `;
+        
+        streamInfo.innerHTML = infoHTML;
+      }
+      
+      // Initialize the application
+      initializeUI();
       
       // Modal functionality
       const modal = document.getElementById('skpop');
@@ -583,28 +949,34 @@
       const joinChannel = document.getElementById('joinChannel');
       const alreadyJoined = document.getElementById('alreadyJoined');
       
-      // Show modal after 5 seconds
+      // Show modal after 10 seconds
       setTimeout(() => {
-        modal.classList.remove('hidden');
-      }, 5000);
+        if (modal) modal.style.display = 'flex';
+      }, 10000);
       
-      closeModal.addEventListener('click', () => {
-        modal.classList.add('hidden');
-      });
+      if (closeModal) {
+        closeModal.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+      }
       
-      joinChannel.addEventListener('click', () => {
-        window.open('https://t.me/cine_arena', '_blank');
-        modal.classList.add('hidden');
-      });
+      if (joinChannel) {
+        joinChannel.addEventListener('click', () => {
+          window.open('https://t.me/cine_arena', '_blank');
+          modal.style.display = 'none';
+        });
+      }
       
-      alreadyJoined.addEventListener('click', () => {
-        modal.classList.add('hidden');
-      });
+      if (alreadyJoined) {
+        alreadyJoined.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+      }
       
       // Close modal when clicking outside
       window.addEventListener('click', (event) => {
         if (event.target === modal) {
-          modal.classList.add('hidden');
+          modal.style.display = 'none';
         }
       });
     });
