@@ -186,17 +186,17 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Player Container - FIXED FOR IFRAME */
+    /* Player Container */
     .player-container {
       position: relative;
       width: 100%;
       margin-bottom: var(--spacing-md);
       flex: 1;
-      min-height: 300px; /* Minimum height for player */
+      min-height: 300px;
       background: #000;
       border-radius: 8px;
       overflow: hidden;
-      display: none; /* Hidden initially */
+      display: none;
     }
 
     #player {
@@ -218,7 +218,7 @@
       background: #000;
     }
 
-    /* Video placeholder when no stream selected */
+    /* Video placeholder */
     .video-placeholder {
       position: absolute;
       top: 0;
@@ -262,7 +262,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      display: none; /* Hidden initially */
+      display: none;
       align-items: center;
       justify-content: center;
       background: rgba(0, 0, 0, 0.8);
@@ -280,7 +280,7 @@
 
     /* Category Tabs */
     .category-tabs {
-      display: none; /* Hidden initially */
+      display: none;
       gap: var(--spacing-xs);
       margin-bottom: var(--spacing-md);
       overflow-x: auto;
@@ -330,7 +330,7 @@
 
     /* Stream Buttons */
     .stream-buttons {
-      display: none; /* Hidden initially */
+      display: none;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: var(--spacing-sm);
       margin-top: var(--spacing-md);
@@ -425,41 +425,29 @@
       font-size: 0.9rem;
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
+    /* Refresh Button */
+    .refresh-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--sky-gradient);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--spacing-md);
-    }
-
-    .modal-content {
-      background: var(--surface-color);
-      border-radius: 12px;
-      padding: var(--spacing-lg);
-      max-width: 400px;
-      width: 100%;
-      border: 1px solid rgba(65, 184, 241, 0.2);
-      position: relative;
-    }
-
-    #closeModal {
-      position: absolute;
-      top: var(--spacing-sm);
-      right: var(--spacing-sm);
-      color: var(--text-secondary);
-      font-size: 24px;
-      cursor: pointer;
-      background: none;
-      border: none;
+      z-index: 20;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       transition: var(--transition);
+    }
+
+    .refresh-btn:hover {
+      transform: rotate(180deg);
+      background: var(--sky-gradient-hover);
     }
 
     /* Responsive Design */
@@ -498,7 +486,6 @@
     }
 
     @media (min-width: 769px) {
-      /* Laptop/Desktop Optimizations */
       #topHeader {
         padding: var(--spacing-sm) 40px;
       }
@@ -531,7 +518,7 @@
       }
       
       .player-container {
-        height: 500px; /* Fixed height for desktop */
+        height: 500px;
         min-height: 500px;
       }
       
@@ -568,7 +555,6 @@
     }
 
     @media (min-width: 1025px) {
-      /* Large Desktop */
       .player-container {
         height: 550px;
         min-height: 550px;
@@ -649,8 +635,15 @@
       <!-- Loader -->
       <div id="pageLoader" class="loader">
         <div class="loader-spinner"></div>
-        <p>Loading streams...</p>
+        <p>Loading streams data...</p>
       </div>
+
+      <!-- Refresh Button -->
+      <button id="refreshBtn" class="refresh-btn" title="Refresh streams">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+      </button>
 
       <!-- Category Tabs -->
       <div class="category-tabs" id="categoryTabs"></div>
@@ -687,6 +680,9 @@
       <div id="errorMessage" class="error-message" role="status" aria-live="polite">
         <h2>Unable to Load Streams</h2>
         <p style="font-size: 0.9rem;">Failed to load streams from server. Please try again later.</p>
+        <button id="retryBtn" style="margin-top: 10px; padding: 8px 16px; background: var(--sky-gradient); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          Retry Loading
+        </button>
       </div>
     </div>
   </div>
@@ -697,19 +693,6 @@
       <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
       Join Telegram Channel
     </a>
-  </div>
-
-  <!-- Modal -->
-  <div id="skpop" class="modal hidden" aria-hidden="true">
-    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button id="closeModal" aria-label="Close">×</button>
-      <h3 id="modalTitle" style="font-size: 1.2rem; margin-bottom: 12px;">Join Our Telegram Channel! 📢</h3>
-      <p style="font-size: 0.9rem;">Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
-        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer;font-size:0.9rem;">🚀 Join Now</button>
-        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer;font-size:0.9rem;">✅ Already Joined</button>
-      </div>
-    </div>
   </div>
 
   <!-- Main Application Script -->
@@ -728,6 +711,8 @@
       const streamInfo = document.getElementById('streamInfo');
       const errorMessage = document.getElementById('errorMessage');
       const customSpinner = document.getElementById('customSpinner');
+      const refreshBtn = document.getElementById('refreshBtn');
+      const retryBtn = document.getElementById('retryBtn');
       
       // State variables
       let streamsData = null;
@@ -735,57 +720,202 @@
       let currentStream = null;
       let currentIframe = null;
       
-      // Test JSON data (you can replace this with your actual JSON URL)
-      const streamsDataTest = {
-        "wpl": {
-          "Jio-Hotstar [Hindi]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-            "type": "iframe"
-          },
-          "Willow [iOS]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-            "type": "iframe"
-          }
-        },
-        "test": {
-          "Demo Stream 1": {
-            "url": "https://www.youtube.com/embed/dQw4w9WgXcQ", // YouTube embed as test
-            "type": "iframe"
-          },
-          "Demo Stream 2": {
-            "url": "https://www.youtube.com/embed/jNQXAC9IVRw", // YouTube embed as test
-            "type": "iframe"
-          }
-        },
-        "live": {
-          "Live Test": {
-            "url": "https://iframe.mediadelivery.net/embed/218509/3f2dd04e-16d8-418f-b3b2-4b8d5739e9da?autoplay=true",
-            "type": "iframe"
-          }
-        }
+      // Configuration - SET YOUR JSON FILE URL HERE
+      const CONFIG = {
+        // Choose one of these JSON sources:
+        jsonUrl: 'streams.json', // Local file in same directory
+         jsonUrl: 'https://raw.githubusercontent.com/cinearena/json/main/ipl.json', // GitHub
+        // jsonUrl: 'https://yourdomain.com/streams.json', // Your domain
+        // jsonUrl: 'https://gist.githubusercontent.com/username/gist-id/raw', // GitHub Gist
+        
+        cacheTime: 5 * 60 * 1000, // 5 minutes cache
+        retryCount: 3,
+        retryDelay: 2000
       };
       
       // Initialize application
-      function initializeApp() {
+      async function initializeApp() {
         console.log('Initializing app...');
+        await loadStreamsData();
+      }
+      
+      // Load streams data from JSON file
+      async function loadStreamsData() {
+        try {
+          showLoader();
+          
+          // Try to fetch from multiple sources if needed
+          const data = await fetchWithRetry(CONFIG.jsonUrl, CONFIG.retryCount);
+          
+          if (data && typeof data === 'object') {
+            streamsData = data;
+            console.log('Successfully loaded streams data:', Object.keys(streamsData));
+            
+            // Hide loader and show UI
+            hideLoader();
+            initializeUI();
+            
+            // Save to localStorage with timestamp
+            saveToLocalStorage(data);
+            
+          } else {
+            throw new Error('Invalid data format');
+          }
+          
+        } catch (error) {
+          console.error('Failed to load streams data:', error);
+          
+          // Try to load from localStorage as fallback
+          const cachedData = loadFromLocalStorage();
+          if (cachedData) {
+            console.log('Using cached data from localStorage');
+            streamsData = cachedData;
+            hideLoader();
+            initializeUI();
+            showNotification('Using cached data. Some streams may be outdated.', 'warning');
+          } else {
+            // Use default data as last resort
+            console.log('Using default data');
+            streamsData = getDefaultData();
+            hideLoader();
+            initializeUI();
+            showNotification('Using default data. Please check your JSON file.', 'error');
+          }
+          
+          showError('Failed to load latest streams. Using cached data.');
+        }
+      }
+      
+      // Fetch with retry logic
+      async function fetchWithRetry(url, retries) {
+        for (let i = 0; i < retries; i++) {
+          try {
+            console.log(`Fetch attempt ${i + 1} from ${url}`);
+            
+            // Add cache busting for development
+            const cacheBuster = new Date().getTime();
+            const fetchUrl = url.includes('?') ? `${url}&_=${cacheBuster}` : `${url}?_=${cacheBuster}`;
+            
+            const response = await fetch(fetchUrl, {
+              headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+              },
+              cache: 'no-cache'
+            });
+            
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            return data;
+            
+          } catch (error) {
+            console.warn(`Attempt ${i + 1} failed:`, error.message);
+            
+            if (i < retries - 1) {
+              await new Promise(resolve => setTimeout(resolve, CONFIG.retryDelay));
+            } else {
+              throw error;
+            }
+          }
+        }
+      }
+      
+      // Save to localStorage
+      function saveToLocalStorage(data) {
+        try {
+          const cacheData = {
+            data: data,
+            timestamp: new Date().getTime()
+          };
+          localStorage.setItem('cinearena_streams', JSON.stringify(cacheData));
+        } catch (error) {
+          console.warn('Failed to save to localStorage:', error);
+        }
+      }
+      
+      // Load from localStorage
+      function loadFromLocalStorage() {
+        try {
+          const cached = localStorage.getItem('cinearena_streams');
+          if (!cached) return null;
+          
+          const cacheData = JSON.parse(cached);
+          const now = new Date().getTime();
+          
+          // Check if cache is still valid
+          if (now - cacheData.timestamp < CONFIG.cacheTime) {
+            return cacheData.data;
+          }
+          
+          return null; // Cache expired
+        } catch (error) {
+          console.warn('Failed to load from localStorage:', error);
+          return null;
+        }
+      }
+      
+      
+      // Show/hide loader
+      function showLoader() {
+        pageLoader.style.display = 'flex';
+        errorMessage.style.display = 'none';
+        playerContainer.style.display = 'none';
+        categoryTabs.style.display = 'none';
+        streamButtons.style.display = 'none';
+      }
+      
+      function hideLoader() {
+        pageLoader.style.display = 'none';
+      }
+      
+      // Show error
+      function showError(message) {
+        errorMessage.style.display = 'block';
+        if (message) {
+          errorMessage.querySelector('p').textContent = message;
+        }
+      }
+      
+      // Show notification
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 80px;
+          right: 20px;
+          padding: 12px 16px;
+          background: ${type === 'error' ? '#dc2626' : type === 'warning' ? '#f59e0b' : '#10b981'};
+          color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 1001;
+          animation: slideIn 0.3s ease;
+          max-width: 300px;
+        `;
         
-        // For testing, use local data
-        streamsData = streamsDataTest;
+        notification.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px; margin-left: 8px;">×</button>
+          </div>
+        `;
         
-        // Simulate loading delay
+        document.body.appendChild(notification);
+        
         setTimeout(() => {
-          pageLoader.style.display = 'none';
-          initializeUI();
-        }, 1000);
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 5000);
       }
       
       // Initialize UI
       function initializeUI() {
-        console.log('Initializing UI with', Object.keys(streamsData).length, 'categories');
-        
         if (!streamsData || Object.keys(streamsData).length === 0) {
-          errorMessage.style.display = 'block';
-          errorMessage.innerHTML = '<h2>No Streams Available</h2><p>Please check back later or join our Telegram for updates.</p>';
+          showError('No streams available. Please check your JSON file.');
           return;
         }
         
@@ -793,9 +923,23 @@
         categoryTabs.style.display = 'flex';
         playerContainer.style.display = 'block';
         streamButtons.style.display = 'grid';
+        refreshBtn.style.display = 'flex';
         errorMessage.style.display = 'none';
         
         // Create category tabs
+        createCategoryTabs();
+        
+        // Select first category by default
+        const firstCategory = Object.keys(streamsData)[0];
+        if (firstCategory) {
+          selectCategory(firstCategory);
+        }
+      }
+      
+      // Create category tabs
+      function createCategoryTabs() {
+        categoryTabs.innerHTML = '';
+        
         Object.keys(streamsData).forEach(category => {
           const tab = document.createElement('div');
           tab.className = 'category-tab';
@@ -808,18 +952,10 @@
           
           categoryTabs.appendChild(tab);
         });
-        
-        // Select first category by default
-        const firstCategory = Object.keys(streamsData)[0];
-        if (firstCategory) {
-          selectCategory(firstCategory);
-        }
       }
       
       // Select category
       function selectCategory(category) {
-        console.log('Selecting category:', category);
-        
         // Update active tab
         document.querySelectorAll('.category-tab').forEach(tab => {
           tab.classList.remove('active');
@@ -837,12 +973,13 @@
         
         // Show placeholder
         videoPlaceholder.style.display = 'flex';
+        
+        // Clear current stream
+        clearStream();
       }
       
       // Create stream buttons for category
       function createStreamButtons(category) {
-        console.log('Creating stream buttons for:', category);
-        
         streamButtons.innerHTML = '';
         const streams = streamsData[category];
         
@@ -870,8 +1007,6 @@
       
       // Select stream
       async function selectStream(category, streamName, streamData, event) {
-        console.log('Selecting stream:', streamName);
-        
         // Update active button
         document.querySelectorAll('.stream-button').forEach(btn => {
           btn.classList.remove('active');
@@ -893,10 +1028,13 @@
           updateInfoPanel(category, streamName, streamData);
           infoPanel.style.display = 'block';
           infoPanel.classList.add('visible');
+          
+          // Show success notification
+          showNotification(`Loaded: ${streamName}`, 'success');
+          
         } catch (error) {
           console.error('Error loading stream:', error);
-          errorMessage.style.display = 'block';
-          errorMessage.innerHTML = `<h2>Stream Error</h2><p>Failed to load: ${streamName}</p><p>Please try another stream.</p>`;
+          showError(`Failed to load: ${streamName}. Please try another stream.`);
           customSpinner.style.display = 'none';
           videoPlaceholder.style.display = 'flex';
         }
@@ -909,7 +1047,6 @@
         // Clear existing iframe
         clearStream();
         
-        // Create new iframe
         return new Promise((resolve, reject) => {
           try {
             const iframe = document.createElement('iframe');
@@ -917,16 +1054,18 @@
             iframe.src = streamData.url;
             iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
             iframe.allowFullscreen = true;
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            iframe.style.position = 'absolute';
-            iframe.style.top = '0';
-            iframe.style.left = '0';
-            iframe.style.zIndex = '2';
+            iframe.style.cssText = `
+              width: 100%;
+              height: 100%;
+              border: none;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
             
-            // Add referrer policy
             iframe.setAttribute('referrerpolicy', 'no-referrer');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
             
             // Handle iframe load
             iframe.onload = () => {
@@ -984,69 +1123,46 @@
           <p><strong>Type:</strong> ${streamData.type || 'iframe'}</p>
           <p><strong>Status:</strong> <span style="color:#4ade80;">● Live</span></p>
           <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary);">
-            If stream doesn't load, try another option
+            Last updated: ${new Date().toLocaleTimeString()}
           </p>
         `;
         
         streamInfo.innerHTML = infoHTML;
       }
       
+      // Event Listeners
+      refreshBtn.addEventListener('click', async () => {
+        console.log('Refreshing streams data...');
+        showNotification('Refreshing streams data...', 'info');
+        await loadStreamsData();
+      });
+      
+      if (retryBtn) {
+        retryBtn.addEventListener('click', async () => {
+          console.log('Retrying...');
+          showNotification('Retrying to load streams...', 'info');
+          await loadStreamsData();
+        });
+      }
+      
+      // Auto-refresh every 10 minutes
+      setInterval(async () => {
+        if (document.visibilityState === 'visible') {
+          console.log('Auto-refreshing streams data...');
+          await loadStreamsData();
+        }
+      }, 10 * 60 * 1000);
+      
       // Start the application
       initializeApp();
       
-      // Modal functionality
-      const modal = document.getElementById('skpop');
-      const closeModal = document.getElementById('closeModal');
-      const joinChannel = document.getElementById('joinChannel');
-      const alreadyJoined = document.getElementById('alreadyJoined');
-      
-      // Show modal after 10 seconds
+      // Modal functionality (optional)
       setTimeout(() => {
-        if (modal) modal.style.display = 'flex';
-      }, 10000);
-      
-      if (closeModal) {
-        closeModal.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-      }
-      
-      if (joinChannel) {
-        joinChannel.addEventListener('click', () => {
-          window.open('https://t.me/cine_arena', '_blank');
-          modal.style.display = 'none';
-        });
-      }
-      
-      if (alreadyJoined) {
-        alreadyJoined.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-      }
-      
-      // Close modal when clicking outside
-      window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-          modal.style.display = 'none';
+        const modal = document.getElementById('skpop');
+        if (modal) {
+          modal.style.display = 'flex';
         }
-      });
-      
-      // Fullscreen support
-      document.addEventListener('fullscreenchange', handleFullscreenChange);
-      document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-      document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-      document.addEventListener('MSFullscreenChange', handleFullscreenChange);
-      
-      function handleFullscreenChange() {
-        const isFullscreen = document.fullscreenElement || 
-                            document.webkitFullscreenElement || 
-                            document.mozFullScreenElement || 
-                            document.msFullscreenElement;
-        
-        if (currentIframe && isFullscreen) {
-          currentIframe.style.zIndex = '9999';
-        }
-      }
+      }, 15000);
     });
   </script>
 </body>
