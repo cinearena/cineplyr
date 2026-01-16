@@ -13,14 +13,13 @@
       /* Sky Gradient Colors */
       --sky-light: #52A7E0;
       --sky-medium: #41B8F1;
-      --sky-dark: #2E9FCF;
       --sky-darker: #1E8BC3;
-      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-dark) 100%);
-      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-dark) 50%, var(--sky-darker) 100%);
+      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-darker) 100%);
+      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-darker) 50%, #1E8BC3 100%);
       
       /* Theme Colors */
       --primary-color: var(--sky-medium);
-      --secondary-color: var(--sky-dark);
+      --secondary-color: var(--sky-darker);
       --accent-color: #FFA726;
       --background-color: #0A1929;
       --surface-color: #132F4C;
@@ -159,6 +158,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
+      min-height: 0;
     }
 
     /* Loader */
@@ -186,26 +186,26 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Player Container - Optimized for different screens */
+    /* Player Container - FIXED FOR IFRAME */
     .player-container {
       position: relative;
       width: 100%;
       margin-bottom: var(--spacing-md);
       flex: 1;
-      min-height: 0;
-      display: none;
-    }
-
-    #player {
-      position: relative;
-      width: 100%;
-      height: 100%;
+      min-height: 300px; /* Minimum height for player */
       background: #000;
       border-radius: 8px;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: none; /* Hidden initially */
+    }
+
+    #player {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
     }
 
     #player iframe {
@@ -215,15 +215,45 @@
       width: 100%;
       height: 100%;
       border: none;
+      background: #000;
     }
 
-    /* Hide native video controls */
-    video::-webkit-media-controls {
-      display: none !important;
+    /* Video placeholder when no stream selected */
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(10, 25, 41, 0.9), rgba(19, 47, 76, 0.9));
+      color: var(--text-color);
+      text-align: center;
+      padding: var(--spacing-md);
+      z-index: 1;
     }
-    
-    video::-webkit-media-controls-enclosure {
-      display: none !important;
+
+    .video-placeholder svg {
+      width: 60px;
+      height: 60px;
+      margin-bottom: var(--spacing-md);
+      fill: var(--sky-medium);
+      opacity: 0.5;
+    }
+
+    .video-placeholder h3 {
+      margin-bottom: var(--spacing-sm);
+      font-size: 1.2rem;
+      color: var(--sky-light);
+    }
+
+    .video-placeholder p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      max-width: 300px;
     }
 
     .custom-shaka-spinner-container {
@@ -232,10 +262,10 @@
       left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
+      display: none; /* Hidden initially */
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 10;
     }
 
@@ -250,7 +280,7 @@
 
     /* Category Tabs */
     .category-tabs {
-      display: flex;
+      display: none; /* Hidden initially */
       gap: var(--spacing-xs);
       margin-bottom: var(--spacing-md);
       overflow-x: auto;
@@ -258,7 +288,6 @@
       scrollbar-width: thin;
       scrollbar-color: var(--sky-medium) transparent;
       flex-shrink: 0;
-      display: none;
     }
 
     .category-tabs::-webkit-scrollbar {
@@ -301,14 +330,13 @@
 
     /* Stream Buttons */
     .stream-buttons {
-      display: grid;
+      display: none; /* Hidden initially */
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: var(--spacing-sm);
       margin-top: var(--spacing-md);
       flex-shrink: 0;
       max-height: 200px;
       overflow-y: auto;
-      display: none;
     }
 
     .stream-button {
@@ -329,27 +357,16 @@
     .stream-button:hover {
       background: rgba(65, 184, 241, 0.2);
       border-color: var(--sky-medium);
+      transform: translateY(-1px);
     }
 
     .stream-button.active {
       background: var(--sky-gradient);
       border-color: transparent;
       color: white;
+      box-shadow: 0 4px 12px rgba(65, 184, 241, 0.3);
     }
 
-    .stream-badge {
-      position: absolute;
-      top: 4px;
-      right: 4px;
-      padding: 1px 4px;
-      background: rgba(255, 167, 38, 0.2);
-      border: 1px solid var(--accent-color);
-      border-radius: 3px;
-      font-size: 0.65rem;
-      color: var(--accent-color);
-    }
-
-    /* Stream Type Indicators */
     .stream-type {
       display: inline-block;
       padding: 1px 6px;
@@ -393,13 +410,7 @@
       display: none;
     }
 
-    .error-message h2 {
-      color: #FF6B6B;
-      margin-bottom: var(--spacing-sm);
-      font-size: 1.2rem;
-    }
-
-    /* Bottom CTA - Lower and Centered */
+    /* Bottom CTA */
     .bottom-cta {
       width: 100%;
       margin: var(--spacing-sm) 0;
@@ -520,14 +531,8 @@
       }
       
       .player-container {
-        height: calc(70vh - 100px);
-        min-height: 400px;
-        max-height: 600px;
-      }
-      
-      #player {
-        height: 100%;
-        border-radius: 12px;
+        height: 500px; /* Fixed height for desktop */
+        min-height: 500px;
       }
       
       .category-tabs {
@@ -565,9 +570,8 @@
     @media (min-width: 1025px) {
       /* Large Desktop */
       .player-container {
-        height: calc(65vh - 120px);
-        min-height: 450px;
-        max-height: 550px;
+        height: 550px;
+        min-height: 550px;
       }
       
       .main-wrap {
@@ -652,8 +656,17 @@
       <div class="category-tabs" id="categoryTabs"></div>
 
       <!-- Player Area -->
-      <div class="player-container">
+      <div class="player-container" id="playerContainer">
         <div id="player">
+          <!-- Video placeholder -->
+          <div class="video-placeholder" id="videoPlaceholder">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            </svg>
+            <h3>Select a Stream</h3>
+            <p>Choose a category above and select a stream to start watching</p>
+          </div>
+          <!-- Loading spinner -->
           <div class="custom-shaka-spinner-container" id="customSpinner">
             <div class="custom-shaka-spinner"></div>
             <div style="color: white; margin-top: 60px; position: absolute; font-size: 0.9rem;">Loading stream...</div>
@@ -678,7 +691,7 @@
     </div>
   </div>
 
-  <!-- Bottom CTA - Lower and Centered -->
+  <!-- Bottom CTA -->
   <div class="bottom-cta">
     <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
       <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
@@ -707,8 +720,9 @@
       // DOM Elements
       const pageLoader = document.getElementById('pageLoader');
       const categoryTabs = document.getElementById('categoryTabs');
-      const playerContainer = document.querySelector('.player-container');
+      const playerContainer = document.getElementById('playerContainer');
       const player = document.getElementById('player');
+      const videoPlaceholder = document.getElementById('videoPlaceholder');
       const streamButtons = document.getElementById('streamButtons');
       const infoPanel = document.getElementById('infoPanel');
       const streamInfo = document.getElementById('streamInfo');
@@ -719,103 +733,50 @@
       let streamsData = null;
       let currentCategory = null;
       let currentStream = null;
-      let currentPlayer = null;
+      let currentIframe = null;
       
-      // JSON URL - Change this to your actual JSON URL
-      const JSON_URL = 'https://raw.githubusercontent.com/yourusername/yourrepo/main/streams.json'; // Replace with your JSON URL
-      // For local testing, you can use: 'streams.json' or a GitHub raw URL
+      // Test JSON data (you can replace this with your actual JSON URL)
+      const streamsDataTest = {
+        "wpl": {
+          "Jio-Hotstar [Hindi]": {
+            "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
+            "type": "iframe"
+          },
+          "Willow [iOS]": {
+            "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+            "type": "iframe"
+          }
+        },
+        "test": {
+          "Demo Stream 1": {
+            "url": "https://www.youtube.com/embed/dQw4w9WgXcQ", // YouTube embed as test
+            "type": "iframe"
+          },
+          "Demo Stream 2": {
+            "url": "https://www.youtube.com/embed/jNQXAC9IVRw", // YouTube embed as test
+            "type": "iframe"
+          }
+        },
+        "live": {
+          "Live Test": {
+            "url": "https://iframe.mediadelivery.net/embed/218509/3f2dd04e-16d8-418f-b3b2-4b8d5739e9da?autoplay=true",
+            "type": "iframe"
+          }
+        }
+      };
       
       // Initialize application
-      async function initializeApp() {
-        try {
-          console.log('Fetching streams from:', JSON_URL);
-          await fetchStreams();
-          
-          // Hide loader
+      function initializeApp() {
+        console.log('Initializing app...');
+        
+        // For testing, use local data
+        streamsData = streamsDataTest;
+        
+        // Simulate loading delay
+        setTimeout(() => {
           pageLoader.style.display = 'none';
-          
-          // Initialize UI
           initializeUI();
-          
-        } catch (error) {
-          console.error('Failed to initialize app:', error);
-          pageLoader.style.display = 'none';
-          errorMessage.style.display = 'block';
-        }
-      }
-      
-      // Fetch JSON data
-      async function fetchStreams() {
-        try {
-          // Try multiple sources - you can add more fallback URLs
-          const urls = [
-            JSON_URL,
-            'streams.json', // Local fallback
-            'https://gist.githubusercontent.com/raw/your-gist-id' // Gist fallback
-          ];
-          
-          let response;
-          let lastError;
-          
-          for (const url of urls) {
-            try {
-              console.log('Trying URL:', url);
-              response = await fetch(url, {
-                headers: {
-                  'Accept': 'application/json',
-                  'Cache-Control': 'no-cache'
-                },
-                cache: 'no-cache'
-              });
-              
-              if (response.ok) {
-                streamsData = await response.json();
-                console.log('Successfully loaded streams:', Object.keys(streamsData));
-                return;
-              }
-            } catch (err) {
-              lastError = err;
-              console.warn('Failed to fetch from', url, err);
-            }
-          }
-          
-          // If all URLs fail, use default data
-          if (!streamsData) {
-            console.warn('Using default stream data');
-            streamsData = getDefaultStreams();
-          }
-          
-        } catch (error) {
-          console.error('Error fetching streams:', error);
-          // Use default data as fallback
-          streamsData = getDefaultStreams();
-        }
-      }
-      
-      // Default streams data (fallback)
-      function getDefaultStreams() {
-        return {
-          "wpl": {
-            "Jio-Hotstar [Hindi]": {
-              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-              "type": "iframe"
-            },
-            "Willow [iOS]": {
-              "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-              "type": "iframe"
-            }
-          },
-          "test": {
-            "Test Stream 1": {
-              "url": "https://cricketstan.github.io/Channel-14/",
-              "type": "iframe"
-            },
-            "Test Stream 2": {
-              "url": "https://cricketstan.github.io/Channel-14/",
-              "type": "iframe"
-            }
-          }
-        };
+        }, 1000);
       }
       
       // Initialize UI
@@ -832,6 +793,7 @@
         categoryTabs.style.display = 'flex';
         playerContainer.style.display = 'block';
         streamButtons.style.display = 'grid';
+        errorMessage.style.display = 'none';
         
         // Create category tabs
         Object.keys(streamsData).forEach(category => {
@@ -870,10 +832,11 @@
         createStreamButtons(category);
         
         // Hide info panel
+        infoPanel.style.display = 'none';
         infoPanel.classList.remove('visible');
         
-        // Clear player if no stream selected
-        clearPlayer();
+        // Show placeholder
+        videoPlaceholder.style.display = 'flex';
       }
       
       // Create stream buttons for category
@@ -897,8 +860,8 @@
             <div class="stream-type">${stream.type || 'iframe'}</div>
           `;
           
-          button.addEventListener('click', () => {
-            selectStream(category, streamName, stream);
+          button.addEventListener('click', (e) => {
+            selectStream(category, streamName, stream, e);
           });
           
           streamButtons.appendChild(button);
@@ -906,7 +869,7 @@
       }
       
       // Select stream
-      async function selectStream(category, streamName, streamData) {
+      async function selectStream(category, streamName, streamData, event) {
         console.log('Selecting stream:', streamName);
         
         // Update active button
@@ -917,7 +880,8 @@
         
         currentStream = { category, name: streamName, data: streamData };
         
-        // Show loading spinner
+        // Hide placeholder and show loading spinner
+        videoPlaceholder.style.display = 'none';
         customSpinner.style.display = 'flex';
         errorMessage.style.display = 'none';
         
@@ -934,80 +898,75 @@
           errorMessage.style.display = 'block';
           errorMessage.innerHTML = `<h2>Stream Error</h2><p>Failed to load: ${streamName}</p><p>Please try another stream.</p>`;
           customSpinner.style.display = 'none';
+          videoPlaceholder.style.display = 'flex';
         }
       }
       
-      // Load stream based on type
+      // Load stream
       async function loadStream(streamData) {
-        console.log('Loading stream type:', streamData.type || 'iframe');
+        console.log('Loading stream:', streamData.url);
         
-        // Clear existing player
-        clearPlayer();
+        // Clear existing iframe
+        clearStream();
         
-        const streamType = streamData.type || 'iframe';
-        
-        switch(streamType) {
-          case 'iframe':
-            await loadIframeStream(streamData);
-            break;
-            
-          case 'hls':
-          case 'mpd-shaka':
-            // For now, treat all as iframe since we only need iframe support
-            await loadIframeStream(streamData);
-            break;
-            
-          default:
-            // Default to iframe
-            await loadIframeStream(streamData);
-        }
-        
-        // Hide spinner after a delay
-        setTimeout(() => {
-          customSpinner.style.display = 'none';
-        }, 1000);
-      }
-      
-      // Load iframe stream
-      function loadIframeStream(streamData) {
+        // Create new iframe
         return new Promise((resolve, reject) => {
           try {
             const iframe = document.createElement('iframe');
+            iframe.id = 'streamIframe';
             iframe.src = streamData.url;
-            iframe.allow = 'autoplay; encrypted-media; fullscreen';
+            iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
             iframe.allowFullscreen = true;
             iframe.style.width = '100%';
             iframe.style.height = '100%';
             iframe.style.border = 'none';
+            iframe.style.position = 'absolute';
+            iframe.style.top = '0';
+            iframe.style.left = '0';
+            iframe.style.zIndex = '2';
             
+            // Add referrer policy
+            iframe.setAttribute('referrerpolicy', 'no-referrer');
+            
+            // Handle iframe load
             iframe.onload = () => {
               console.log('Iframe loaded successfully');
+              customSpinner.style.display = 'none';
               resolve();
             };
             
-            iframe.onerror = (error) => {
-              console.error('Iframe load error:', error);
+            iframe.onerror = () => {
+              console.error('Iframe failed to load');
               reject(new Error('Failed to load iframe'));
             };
             
+            // Add iframe to player
             player.appendChild(iframe);
-            currentPlayer = iframe;
+            currentIframe = iframe;
             
-            // If iframe doesn't fire onload quickly, resolve after timeout
-            setTimeout(resolve, 2000);
+            // Fallback timeout
+            setTimeout(() => {
+              if (customSpinner.style.display === 'flex') {
+                console.log('Iframe load timeout, assuming success');
+                customSpinner.style.display = 'none';
+                resolve();
+              }
+            }, 3000);
+            
           } catch (error) {
+            console.error('Error creating iframe:', error);
             reject(error);
           }
         });
       }
       
-      // Clear current player
-      function clearPlayer() {
-        if (currentPlayer) {
-          if (currentPlayer.parentNode === player) {
-            player.removeChild(currentPlayer);
+      // Clear current stream
+      function clearStream() {
+        if (currentIframe) {
+          if (currentIframe.parentNode === player) {
+            player.removeChild(currentIframe);
           }
-          currentPlayer = null;
+          currentIframe = null;
         }
         
         // Remove all iframes from player
@@ -1015,9 +974,6 @@
         iframes.forEach(iframe => {
           iframe.remove();
         });
-        
-        // Ensure spinner is visible when clearing
-        customSpinner.style.display = 'none';
       }
       
       // Update info panel
@@ -1027,6 +983,9 @@
           <p><strong>Stream:</strong> ${streamName}</p>
           <p><strong>Type:</strong> ${streamData.type || 'iframe'}</p>
           <p><strong>Status:</strong> <span style="color:#4ade80;">● Live</span></p>
+          <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-secondary);">
+            If stream doesn't load, try another option
+          </p>
         `;
         
         streamInfo.innerHTML = infoHTML;
@@ -1071,6 +1030,23 @@
           modal.style.display = 'none';
         }
       });
+      
+      // Fullscreen support
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+      
+      function handleFullscreenChange() {
+        const isFullscreen = document.fullscreenElement || 
+                            document.webkitFullscreenElement || 
+                            document.mozFullScreenElement || 
+                            document.msFullscreenElement;
+        
+        if (currentIframe && isFullscreen) {
+          currentIframe.style.zIndex = '9999';
+        }
+      }
     });
   </script>
 </body>
