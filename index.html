@@ -1,25 +1,574 @@
-<html lang="en"><head>
-
-
+<html lang="en">
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%23DC2626;stop-opacity:1' /><stop offset='100%' style='stop-color:%23EF4444;stop-opacity:1' /></linearGradient></defs><rect x='5' y='5' width='50' height='50' rx='10' fill='url(%23grad)'/><text x='30' y='38' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='white'>CA</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%2352A7E0;stop-opacity:1' /><stop offset='100%' style='stop-color:%2341B8F1;stop-opacity:1' /></linearGradient></defs><rect x='5' y='5' width='50' height='50' rx='10' fill='url(%23grad)'/><text x='30' y='38' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='white'>CA</text></svg>">
   <meta name="referrer" content="no-referrer">
   <title>CineArena.Live</title>
 
   <!-- External player CSS -->
-  <link rel="stylesheet" href="cdn.plyr.io/3.7.8/plyr.css">
-  <link rel="stylesheet" href="cdn.jsdelivr.net/npm/dplayer_1.26.0/dist/dplayer.min.css">
-  <link rel="stylesheet" href="cdnjs.cloudflare.com/ajax/libs/shaka_player/4.16.3/controls.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.css" crossorigin="anonymous">
 
-  <!-- NOTE: JW Player library will be loaded dynamically below (see code). -->
+  <!-- Responsive CSS with Sky Gradient Theme -->
+  <style>
+    :root {
+      /* Sky Gradient Colors */
+      --sky-light: #52A7E0;
+      --sky-medium: #41B8F1;
+      --sky-dark: #2E9FCF;
+      --sky-darker: #1E8BC3;
+      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-dark) 100%);
+      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-dark) 50%, var(--sky-darker) 100%);
+      
+      /* Theme Colors */
+      --primary-color: var(--sky-medium);
+      --secondary-color: var(--sky-dark);
+      --accent-color: #FFA726;
+      --background-color: #0A1929;
+      --surface-color: #132F4C;
+      --text-color: #E6F7FF;
+      --text-secondary: #A6D8FF;
+      --header-bg: rgba(18, 38, 58, 0.95);
+      --header-border: rgba(66, 184, 241, 0.2);
+      --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      --transition: all 0.3s ease;
+      
+      /* Spacing */
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-xxl: 48px;
+      
+      /* Breakpoints */
+      --mobile: 480px;
+      --tablet: 768px;
+      --desktop: 1024px;
+      --wide: 1200px;
+    }
 
-  <!-- Small anti-devtools script kept as original (optional) -->
-  <script src="cdn.jsdelivr.net/npm/disable_devtool_latest"></script>
-  
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-  
-<script src="cdn.jwplayer.com/libraries/sahhwvzq.js" async=""></script><link rel="stylesheet" href="css/inline_styles.css"></head>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 20% 80%, rgba(82, 167, 224, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(65, 184, 241, 0.1) 0%, transparent 50%);
+    }
+
+    /* Header Styles */
+    #topHeader {
+      background: var(--header-bg);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--header-border);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-sm) var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+    }
+
+    .logo {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-weight: 800;
+      text-decoration: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      background: var(--sky-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .logo small {
+      font-size: 0.6em;
+      font-weight: 600;
+      opacity: 0.8;
+      margin-left: var(--spacing-xs);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: var(--spacing-sm);
+    }
+
+    .telegram-join {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      background: var(--sky-gradient);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: var(--transition);
+      border: 2px solid transparent;
+      white-space: nowrap;
+    }
+
+    .telegram-join:hover {
+      background: var(--sky-gradient-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(65, 184, 241, 0.3);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .telegram-join svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .telegram-join .label {
+      display: inline;
+    }
+
+    /* Main Content */
+    .main-wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+    }
+
+    .container {
+      background: var(--surface-color);
+      border-radius: 20px;
+      padding: var(--spacing-lg);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(65, 184, 241, 0.1);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    /* Player Area */
+    #player {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .custom-shaka-spinner-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+    }
+
+    .custom-shaka-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(65, 184, 241, 0.2);
+      border-top-color: var(--sky-medium);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Language Buttons */
+    .language-buttons {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+    }
+
+    .language-buttons button {
+      padding: var(--spacing-md);
+      background: rgba(65, 184, 241, 0.1);
+      border: 2px solid rgba(65, 184, 241, 0.3);
+      border-radius: 10px;
+      color: var(--text-color);
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .language-buttons button:hover {
+      background: rgba(65, 184, 241, 0.2);
+      border-color: var(--sky-medium);
+      transform: translateY(-2px);
+    }
+
+    .language-buttons button.active {
+      background: var(--sky-gradient);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md);
+    }
+
+    .modal-content {
+      background: var(--surface-color);
+      border-radius: 20px;
+      padding: var(--spacing-xl);
+      max-width: 500px;
+      width: 100%;
+      border: 1px solid rgba(65, 184, 241, 0.2);
+      position: relative;
+    }
+
+    #closeModal {
+      position: absolute;
+      top: var(--spacing-md);
+      right: var(--spacing-md);
+      color: var(--text-secondary);
+      font-size: 28px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      transition: var(--transition);
+    }
+
+    #closeModal:hover {
+      color: var(--sky-medium);
+    }
+
+    .modal-content h3 {
+      margin-bottom: var(--spacing-md);
+      color: white;
+      font-size: 1.5rem;
+    }
+
+    .modal-content p {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      min-width: 150px;
+      padding: var(--spacing-md);
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+
+    #joinChannel {
+      background: var(--sky-gradient);
+      color: white;
+    }
+
+    #joinChannel:hover {
+      background: var(--sky-gradient-hover);
+      transform: translateY(-2px);
+    }
+
+    #alreadyJoined {
+      background: transparent;
+      border: 2px solid rgba(65, 184, 241, 0.3);
+      color: var(--text-color);
+    }
+
+    #alreadyJoined:hover {
+      border-color: var(--sky-medium);
+      background: rgba(65, 184, 241, 0.1);
+    }
+
+    /* Loader and Error States */
+    .loader {
+      text-align: center;
+      padding: var(--spacing-xxl) 0;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(65, 184, 241, 0.2);
+      border-top-color: var(--sky-medium);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    .error-message {
+      text-align: center;
+      padding: var(--spacing-xxl) var(--spacing-md);
+    }
+
+    .error-message h2 {
+      color: #FF6B6B;
+      margin-bottom: var(--spacing-md);
+      font-size: 1.8rem;
+    }
+
+    .error-message p {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .error-message code {
+      background: rgba(255, 107, 107, 0.1);
+      color: #FF6B6B;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--spacing-md);
+      }
+
+      .telegram-join {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .telegram-join .label {
+        display: inline;
+      }
+
+      .main-wrap {
+        padding: var(--spacing-sm);
+      }
+
+      .container {
+        padding: var(--spacing-md);
+      }
+
+      .language-buttons {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+
+      .modal-content {
+        padding: var(--spacing-lg);
+      }
+
+      .modal-buttons {
+        flex-direction: column;
+      }
+
+      .modal-buttons button {
+        min-width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-inner {
+        padding: var(--spacing-sm);
+      }
+
+      .telegram-join {
+        padding: var(--spacing-sm);
+      }
+
+      .telegram-join svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .telegram-join .label {
+        font-size: 0.9rem;
+      }
+
+      .logo {
+        font-size: 1.8rem;
+      }
+
+      .main-wrap {
+        padding: var(--spacing-xs);
+      }
+
+      .container {
+        padding: var(--spacing-sm);
+        border-radius: 12px;
+      }
+
+      #player {
+        aspect-ratio: 4/3;
+        border-radius: 8px;
+      }
+
+      .language-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Bottom CTA */
+    .bottom-cta {
+      max-width: 1400px;
+      margin: var(--spacing-lg) auto;
+      padding: 0 var(--spacing-md);
+      text-align: center;
+    }
+
+    /* Counter */
+    .mt-2 {
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: rgba(65, 184, 241, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(65, 184, 241, 0.1);
+      max-width: 300px;
+      margin: var(--spacing-lg) auto;
+    }
+
+    /* Match Select */
+    .match-select {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .match-select label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    #matchSelect {
+      width: 100%;
+      padding: var(--spacing-md);
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid rgba(65, 184, 241, 0.3);
+      border-radius: 10px;
+      color: var(--text-color);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    #matchSelect:focus {
+      outline: none;
+      border-color: var(--sky-medium);
+      box-shadow: 0 0 0 3px rgba(65, 184, 241, 0.1);
+    }
+
+    /* M3U8 Overlay */
+    #m3u8Layer {
+      position: fixed;
+      bottom: var(--spacing-md);
+      right: var(--spacing-md);
+      z-index: 1000;
+      max-width: calc(100% - 32px);
+    }
+
+    .overlayDiv {
+      background: var(--surface-color);
+      border: 1px solid rgba(65, 184, 241, 0.3);
+      border-radius: 12px;
+      padding: var(--spacing-sm);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .m3u8Link {
+      color: var(--sky-medium);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    .m3u8Link:hover {
+      color: var(--sky-light);
+      text-decoration: underline;
+    }
+
+    .olButton {
+      background: rgba(65, 184, 241, 0.1);
+      border: 1px solid rgba(65, 184, 241, 0.3);
+      color: var(--text-color);
+      padding: 4px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+
+    .olButton:hover {
+      background: rgba(65, 184, 241, 0.2);
+      border-color: var(--sky-medium);
+    }
+
+    .hoverRed:hover {
+      background: rgba(255, 107, 107, 0.2);
+      border-color: #FF6B6B;
+      color: #FF6B6B;
+    }
+
+    /* Utility Classes */
+    .hidden {
+      display: none !important;
+    }
+
+    .visible {
+      display: block !important;
+    }
+
+    .flex-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .full-width {
+      width: 100%;
+    }
+  </style>
+
+  <!-- JW Player library will be loaded dynamically below (see code) -->
+</head>
+
 <body>
   <header id="topHeader" role="banner" aria-label="Site header">
     <div class="header-inner">
@@ -36,12 +585,12 @@
     </div>
   </header>
 
-  <div class="main-wrap" id="mainWrap" style="padding-top: 8px;">
+  <div class="main-wrap" id="mainWrap">
     <div class="container" id="mainContent" role="main" style="display: block;">
       <div class="content-divider" aria-hidden="true"></div>
 
       <div id="pageLoader" class="loader hidden" aria-hidden="true">
-        <div style="text-align:center">
+        <div class="text-center">
           <div class="loader-spinner" role="status" aria-label="Loading"></div>
         </div>
       </div>
@@ -70,88 +619,38 @@
     </div>
   </div>
 
-  <div style="max-width:var(--max-width);width:100%;margin:10px auto;display:flex;justify-content:center;">
-    <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer" style="padding:12px 20px;">
-      <img src="cdn.jsdelivr.net/npm/simple_icons_v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
+  <div class="bottom-cta">
+    <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:20px;height:20px;margin-right:10px;">
       Join Telegram Channel
     </a>
   </div>
 
   <div id="skpop" class="modal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-      <button id="closeModal" style="float:right;background:none;border:none;font-size:20px;cursor:pointer" aria-label="Close">×</button>
+      <button id="closeModal" aria-label="Close">×</button>
       <h3 id="modalTitle">Join Our Telegram Channel! 📢</h3>
       <p>Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px">
-        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer">🚀 Join Now</button>
-        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer">✅ Already Joined</button>
+      <div class="modal-buttons">
+        <button id="joinChannel">🚀 Join Now</button>
+        <button id="alreadyJoined">✅ Already Joined</button>
       </div>
     </div>
   </div>
 
-  <!-- External scripts (players) -->
-  <script src="ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-  <script src="cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-  <script src="cdn.jsdelivr.net/npm/hls.js_1"></script>
-  <script src="cdn.jsdelivr.net/npm/dplayer_1.26.0/dist/dplayer.min.js"></script>
-  <script src="cdnjs.cloudflare.com/ajax/libs/shaka_player/4.16.3/shaka_player.ui.js" crossorigin="anonymous"></script>
-
-  
-
-  
-
-<div id="m3u8Layer" style="display: none;"><!-- overlay.html -->
-<div id="m3u8OverlayDiv" class="overlayDiv" style="display: inline; left: 0px;"> 
-    <span id="titleSpan" class="titleSpan" style="padding-left:6px;">
-        <a id="titleM3u8Link" target="_self" href="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="m3u8Link" title="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8">
-            <span id="titleText">m3u8 Sniffer</span>
-            <span style="padding-right:3px;">[<span id="tabM3u8Count">3</span>]</span></a></span>
-    
-    <span id="m3u8LinkSpan" style="display: inline;" title="Show First / Last m3u8 video link (Alt Shift F / L)">
-        <select id="showFirstLast" class="overlayDD">
-            <option class="overlayDD" value="first" selected="">First</option>
-            <option class="overlayDD" value="last">Last</option>
-        </select>&nbsp;
-        <a id="m3u8Link" target="_self" href="https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="m3u8Link" title="Click or right click to open the m3u8 URL (Alt Enter)">
-            <span id="m3u8LinkText" class="m3u8Link">https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8</span>
-        </a>&nbsp;
-    </span>
-    <span class="buttonsSpan noWrap" style="white-space:nowrap;">
-        <span id="m3u8HideSpan" style="margin-left:2px;margin-right:0px;">
-            <span id="m3u8HideButton" class="olButton" title="Shrink the overlay to the upper right corner (Alt &lt;)" style="display: inline;">
-                &nbsp;&nbsp;&nbsp;&lt;&nbsp;&nbsp;
-            </span>
-        </span>
-        <span id="m3u8ExpandOverlay" class="olButton noWrap" title="Expand to show full overlay details (Alt +)" style="display: none;">
-            &nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;
-        </span>
-        <span id="m3u8CopyButton" class="olButton noWrap" title="Copy the m3u8 URL to the clipboard (Alt C)">
-            &nbsp;&nbsp;Copy&nbsp;
-        </span>
-<!--
-        <span id="m3u8PlayButton" class="olButton noWrap"
-            title="Play the m3u8 video in the current tab (Alt P)">
-            &nbsp;&nbsp;Play&nbsp;
-        </span>
--->
-        <span id="m3u8PlayButton" class="olButton noWrap" title="Play the m3u8 video in the current tab (Alt P, can use Ctrl or Shift for new tab/window)">
-            <a id="m3u8PlayLink" href="chrome-extension://akkncdpkjlfanomlnpmmolafofpnpjgn/player/player.html?site=https://skcricweb.pages.dev/ipel#https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8" class="cssbutton" style="color:white;text-decoration:none;">
-                &nbsp;&nbsp;Play&nbsp;
-            </a>
-        </span>
-        <span id="m3u8CloseButton" class="olButton hoverRed noWrap" title="Close the m3u8 overlay for this page (Alt X)">
-            &nbsp;&nbsp;X&nbsp;&nbsp;</span><span id="m3u8HideRightButton" class="olButton noWrap" title="Shrink the overlay to the upper right corner (Alt &gt;)" style="display: inline;">
-            &nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;
-        </span>
-    </span><br>
-</div>
-
-  <!-- Hidden Counter Container -->
-  <!-- 🔻 Online Counter -->
-  <center class="mt-2">
+  <!-- Online Counter -->
+  <div class="mt-2 text-center">
     <script src="//widget.supercounters.com/ssl/online_t.js"></script>
-    <script>sc_online_t(1707487,"Users Online","170ddb");</script>
+    <script>sc_online_t(1707487,"Users Online","41B8F1");</script>
     <noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
-  </center>
-  
-</div><script src="js/inline_scripts.js"></script></body></html>
+  </div>
+
+  <!-- External scripts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jwplayer.com/libraries/sahhwvzq.js" async></script>
+</body>
+</html>
