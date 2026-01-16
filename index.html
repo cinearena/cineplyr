@@ -1,7 +1,8 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%2352A7E0;stop-opacity:1' /><stop offset='100%' style='stop-color:%2341B8F1;stop-opacity:1' /></linearGradient></defs><rect x='5' y='5' width='50' height='50' rx='10' fill='url(%23grad)'/><text x='30' y='38' text-anchor='middle' font-family='Arial, sans-serif' font-size='24' font-weight='bold' fill='white'>CA</text></svg>">
   <meta name="referrer" content="no-referrer">
   <title>CineArena.Live</title>
@@ -9,6 +10,8 @@
   <!-- External player CSS -->
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.css">
+  
+  <!-- Shaka Player CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.css" crossorigin="anonymous">
 
   <!-- Responsive CSS with Sky Gradient Theme -->
@@ -42,12 +45,6 @@
       --spacing-lg: 24px;
       --spacing-xl: 32px;
       --spacing-xxl: 48px;
-      
-      /* Breakpoints */
-      --mobile: 480px;
-      --tablet: 768px;
-      --desktop: 1024px;
-      --wide: 1200px;
     }
 
     * {
@@ -108,11 +105,6 @@
       margin-left: var(--spacing-xs);
     }
 
-    .header-actions {
-      display: flex;
-      gap: var(--spacing-sm);
-    }
-
     .telegram-join {
       display: flex;
       align-items: center;
@@ -135,16 +127,6 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .telegram-join svg {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-    }
-
-    .telegram-join .label {
-      display: inline;
-    }
-
     /* Main Content */
     .main-wrap {
       max-width: 1400px;
@@ -161,15 +143,49 @@
       margin-bottom: var(--spacing-lg);
     }
 
-    /* Player Area */
+    /* Player Area - IMPORTANT FIX */
     #player {
       position: relative;
       width: 100%;
-      aspect-ratio: 16/9;
+      height: 0;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
       background: #000;
       border-radius: 12px;
       overflow: hidden;
       margin-bottom: var(--spacing-lg);
+    }
+
+    #player video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #player .plyr {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #player .dplayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    #player .shaka-video-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
 
     .custom-shaka-spinner-container {
@@ -224,10 +240,31 @@
       transform: translateY(-2px);
     }
 
-    .language-buttons button.active {
-      background: var(--sky-gradient);
-      border-color: transparent;
-      color: white;
+    /* Loader and Error States */
+    .loader {
+      text-align: center;
+      padding: var(--spacing-xxl) 0;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(65, 184, 241, 0.2);
+      border-top-color: var(--sky-medium);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    .error-message {
+      text-align: center;
+      padding: var(--spacing-xxl) var(--spacing-md);
+    }
+
+    .error-message h2 {
+      color: #FF6B6B;
+      margin-bottom: var(--spacing-md);
+      font-size: 1.8rem;
     }
 
     /* Modal */
@@ -267,99 +304,6 @@
       transition: var(--transition);
     }
 
-    #closeModal:hover {
-      color: var(--sky-medium);
-    }
-
-    .modal-content h3 {
-      margin-bottom: var(--spacing-md);
-      color: white;
-      font-size: 1.5rem;
-    }
-
-    .modal-content p {
-      color: var(--text-secondary);
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: var(--spacing-md);
-      flex-wrap: wrap;
-    }
-
-    .modal-buttons button {
-      flex: 1;
-      min-width: 150px;
-      padding: var(--spacing-md);
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      border: none;
-    }
-
-    #joinChannel {
-      background: var(--sky-gradient);
-      color: white;
-    }
-
-    #joinChannel:hover {
-      background: var(--sky-gradient-hover);
-      transform: translateY(-2px);
-    }
-
-    #alreadyJoined {
-      background: transparent;
-      border: 2px solid rgba(65, 184, 241, 0.3);
-      color: var(--text-color);
-    }
-
-    #alreadyJoined:hover {
-      border-color: var(--sky-medium);
-      background: rgba(65, 184, 241, 0.1);
-    }
-
-    /* Loader and Error States */
-    .loader {
-      text-align: center;
-      padding: var(--spacing-xxl) 0;
-    }
-
-    .loader-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(65, 184, 241, 0.2);
-      border-top-color: var(--sky-medium);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
-    .error-message {
-      text-align: center;
-      padding: var(--spacing-xxl) var(--spacing-md);
-    }
-
-    .error-message h2 {
-      color: #FF6B6B;
-      margin-bottom: var(--spacing-md);
-      font-size: 1.8rem;
-    }
-
-    .error-message p {
-      color: var(--text-secondary);
-      margin-bottom: var(--spacing-md);
-    }
-
-    .error-message code {
-      background: rgba(255, 107, 107, 0.1);
-      color: #FF6B6B;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-family: monospace;
-    }
-
     /* Responsive Design */
     @media (max-width: 768px) {
       .header-inner {
@@ -368,15 +312,6 @@
         padding: var(--spacing-md);
       }
 
-      .telegram-join {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .telegram-join .label {
-        display: inline;
-      }
-
       .main-wrap {
         padding: var(--spacing-sm);
       }
@@ -385,61 +320,18 @@
         padding: var(--spacing-md);
       }
 
-      .language-buttons {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
-
-      .modal-content {
-        padding: var(--spacing-lg);
-      }
-
-      .modal-buttons {
-        flex-direction: column;
-      }
-
-      .modal-buttons button {
-        min-width: 100%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .header-inner {
-        padding: var(--spacing-sm);
-      }
-
-      .telegram-join {
-        padding: var(--spacing-sm);
-      }
-
-      .telegram-join svg {
-        width: 18px;
-        height: 18px;
-      }
-
-      .telegram-join .label {
-        font-size: 0.9rem;
-      }
-
-      .logo {
-        font-size: 1.8rem;
-      }
-
-      .main-wrap {
-        padding: var(--spacing-xs);
-      }
-
-      .container {
-        padding: var(--spacing-sm);
-        border-radius: 12px;
-      }
-
       #player {
-        aspect-ratio: 4/3;
-        border-radius: 8px;
+        padding-bottom: 75%; /* 4:3 aspect ratio for mobile */
       }
 
       .language-buttons {
         grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #player {
+        padding-bottom: 100%; /* 1:1 aspect ratio for very small screens */
       }
     }
 
@@ -451,97 +343,6 @@
       text-align: center;
     }
 
-    /* Counter */
-    .mt-2 {
-      margin-top: var(--spacing-lg);
-      padding: var(--spacing-md);
-      background: rgba(65, 184, 241, 0.05);
-      border-radius: 12px;
-      border: 1px solid rgba(65, 184, 241, 0.1);
-      max-width: 300px;
-      margin: var(--spacing-lg) auto;
-    }
-
-    /* Match Select */
-    .match-select {
-      margin-bottom: var(--spacing-lg);
-    }
-
-    .match-select label {
-      display: block;
-      margin-bottom: var(--spacing-sm);
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-
-    #matchSelect {
-      width: 100%;
-      padding: var(--spacing-md);
-      background: rgba(255, 255, 255, 0.05);
-      border: 2px solid rgba(65, 184, 241, 0.3);
-      border-radius: 10px;
-      color: var(--text-color);
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-
-    #matchSelect:focus {
-      outline: none;
-      border-color: var(--sky-medium);
-      box-shadow: 0 0 0 3px rgba(65, 184, 241, 0.1);
-    }
-
-    /* M3U8 Overlay */
-    #m3u8Layer {
-      position: fixed;
-      bottom: var(--spacing-md);
-      right: var(--spacing-md);
-      z-index: 1000;
-      max-width: calc(100% - 32px);
-    }
-
-    .overlayDiv {
-      background: var(--surface-color);
-      border: 1px solid rgba(65, 184, 241, 0.3);
-      border-radius: 12px;
-      padding: var(--spacing-sm);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      backdrop-filter: blur(10px);
-    }
-
-    .m3u8Link {
-      color: var(--sky-medium);
-      text-decoration: none;
-      word-break: break-all;
-    }
-
-    .m3u8Link:hover {
-      color: var(--sky-light);
-      text-decoration: underline;
-    }
-
-    .olButton {
-      background: rgba(65, 184, 241, 0.1);
-      border: 1px solid rgba(65, 184, 241, 0.3);
-      color: var(--text-color);
-      padding: 4px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 0.9rem;
-    }
-
-    .olButton:hover {
-      background: rgba(65, 184, 241, 0.2);
-      border-color: var(--sky-medium);
-    }
-
-    .hoverRed:hover {
-      background: rgba(255, 107, 107, 0.2);
-      border-color: #FF6B6B;
-      color: #FF6B6B;
-    }
-
     /* Utility Classes */
     .hidden {
       display: none !important;
@@ -550,30 +351,13 @@
     .visible {
       display: block !important;
     }
-
-    .flex-center {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .text-center {
-      text-align: center;
-    }
-
-    .full-width {
-      width: 100%;
-    }
   </style>
-
-  <!-- JW Player library will be loaded dynamically below (see code) -->
 </head>
 
 <body>
   <header id="topHeader" role="banner" aria-label="Site header">
     <div class="header-inner">
       <a class="logo" href="/" id="siteLogo">CINE ARENA<small>LIVE</small></a>
-
       <div class="header-actions" aria-hidden="false">
         <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer" title="Join our Telegram channel">
           <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
@@ -586,36 +370,27 @@
   </header>
 
   <div class="main-wrap" id="mainWrap">
-    <div class="container" id="mainContent" role="main" style="display: block;">
-      <div class="content-divider" aria-hidden="true"></div>
-
-      <div id="pageLoader" class="loader hidden" aria-hidden="true">
-        <div class="text-center">
+    <div class="container" id="mainContent" role="main">
+      <div id="pageLoader" class="loader">
+        <div style="text-align:center">
           <div class="loader-spinner" role="status" aria-label="Loading"></div>
+          <p style="margin-top: 20px;">Loading player...</p>
         </div>
       </div>
 
-      <div id="errorMessage" class="error-message" role="status" aria-live="polite" style="display: none;">
+      <div id="errorMessage" class="error-message hidden" role="status" aria-live="polite">
         <h2>Invalid or Missing ID</h2>
         <p>Please provide a valid match ID in the URL (for example <code>?id=1</code>)</p>
         <p>Visit our Telegram channel for valid links.</p>
       </div>
 
-      <div class="match-select" style="display:none">
-        <label for="matchSelect">Select Match:</label>
-        <select id="matchSelect">
-          <option value="1">Match 1</option>
-          <option value="2">Match 2</option>
-        </select>
-      </div>
-
-      <div id="player" aria-label="Video player" style="display: none;">
+      <div id="player" aria-label="Video player">
         <div class="custom-shaka-spinner-container" id="customSpinner" aria-hidden="true">
           <div class="custom-shaka-spinner" aria-hidden="true"></div>
         </div>
       </div>
 
-      <div class="language-buttons" role="tablist" aria-label="Available audio / streams" style="display: none;"></div>
+      <div class="language-buttons" id="languageButtons" role="tablist" aria-label="Available audio / streams" style="display: none;"></div>
     </div>
   </div>
 
@@ -626,23 +401,16 @@
     </a>
   </div>
 
-  <div id="skpop" class="modal" aria-hidden="true">
+  <div id="skpop" class="modal hidden" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <button id="closeModal" aria-label="Close">×</button>
       <h3 id="modalTitle">Join Our Telegram Channel! 📢</h3>
       <p>Get instant updates, exclusive content and premium support by joining our Telegram community.</p>
-      <div class="modal-buttons">
-        <button id="joinChannel">🚀 Join Now</button>
-        <button id="alreadyJoined">✅ Already Joined</button>
+      <div class="modal-buttons" style="display:flex;gap:10px;margin-top:12px">
+        <button id="joinChannel" style="flex:1;padding:10px;border-radius:8px;background:linear-gradient(90deg,var(--primary-color),var(--secondary-color));color:#fff;border:none;cursor:pointer">🚀 Join Now</button>
+        <button id="alreadyJoined" style="flex:1;padding:10px;border-radius:8px;background:transparent;border:1px solid var(--header-border);color:var(--text-color);cursor:pointer">✅ Already Joined</button>
       </div>
     </div>
-  </div>
-
-  <!-- Online Counter -->
-  <div class="mt-2 text-center">
-    <script src="//widget.supercounters.com/ssl/online_t.js"></script>
-    <script>sc_online_t(1707487,"Users Online","41B8F1");</script>
-    <noscript><a href="https://www.supercounters.com/">supercounters.com</a></noscript>
   </div>
 
   <!-- External scripts -->
@@ -651,6 +419,195 @@
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
   <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jwplayer.com/libraries/sahhwvzq.js" async></script>
+
+  <!-- Player initialization script -->
+  <script>
+    // Wait for DOM to be fully loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM loaded, initializing player...');
+      
+      const playerContainer = document.getElementById('player');
+      const pageLoader = document.getElementById('pageLoader');
+      const errorMessage = document.getElementById('errorMessage');
+      const languageButtons = document.getElementById('languageButtons');
+      
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const streamId = urlParams.get('id');
+      
+      // Stream sources (you can replace these with your actual stream URLs)
+      const streamSources = {
+        '1': 'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8',
+        '2': 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        '3': 'https://bitdash-a.akamaihd.net/s/content/media/sintel/hls/playlist.m3u8'
+      };
+      
+      function initializePlayer() {
+        try {
+          // Hide loader
+          pageLoader.classList.add('hidden');
+          
+          // Check if we have a valid stream ID
+          if (!streamId || !streamSources[streamId]) {
+            errorMessage.classList.remove('hidden');
+            playerContainer.style.display = 'none';
+            return;
+          }
+          
+          // Show player container
+          playerContainer.style.display = 'block';
+          
+          // Get stream URL
+          const streamUrl = streamSources[streamId];
+          console.log('Loading stream:', streamUrl);
+          
+          // Create video element
+          const videoElement = document.createElement('video');
+          videoElement.id = 'videoPlayer';
+          videoElement.setAttribute('playsinline', '');
+          videoElement.setAttribute('controls', '');
+          videoElement.setAttribute('preload', 'auto');
+          videoElement.style.width = '100%';
+          videoElement.style.height = '100%';
+          
+          // Create source element
+          const sourceElement = document.createElement('source');
+          sourceElement.src = streamUrl;
+          sourceElement.type = 'application/x-mpegURL';
+          
+          videoElement.appendChild(sourceElement);
+          playerContainer.appendChild(videoElement);
+          
+          // Initialize Plyr player
+          const player = new Plyr(videoElement, {
+            controls: [
+              'play-large',
+              'play',
+              'progress',
+              'current-time',
+              'duration',
+              'mute',
+              'volume',
+              'captions',
+              'settings',
+              'pip',
+              'airplay',
+              'fullscreen'
+            ],
+            ratio: '16:9',
+            autoplay: false,
+            muted: false,
+            clickToPlay: true,
+            storage: {
+              enabled: true,
+              key: 'cinearena-player'
+            },
+            iconUrl: 'https://cdn.plyr.io/3.7.8/plyr.svg',
+            blankVideo: 'https://cdn.plyr.io/static/blank.mp4'
+          });
+          
+          // Handle player events
+          player.on('ready', function(event) {
+            console.log('Player is ready');
+            document.getElementById('customSpinner').style.display = 'none';
+            
+            // Show language buttons if needed
+            languageButtons.style.display = 'grid';
+            createLanguageButtons();
+          });
+          
+          player.on('error', function(error) {
+            console.error('Player error:', error);
+            errorMessage.innerHTML = '<h2>Stream Error</h2><p>Unable to load the video stream. Please try another link.</p>';
+            errorMessage.classList.remove('hidden');
+          });
+          
+          player.on('playing', function() {
+            console.log('Player started playing');
+          });
+          
+          // Also try to play on user interaction for autoplay policies
+          document.addEventListener('click', function() {
+            if (player.paused) {
+              player.play().catch(e => console.log('Autoplay prevented:', e));
+            }
+          }, { once: true });
+          
+        } catch (error) {
+          console.error('Error initializing player:', error);
+          pageLoader.classList.add('hidden');
+          errorMessage.classList.remove('hidden');
+          errorMessage.innerHTML = '<h2>Player Error</h2><p>Failed to initialize video player. Please refresh the page.</p>';
+        }
+      }
+      
+      function createLanguageButtons() {
+        const languages = [
+          { id: 'eng', name: 'English', code: 'EN' },
+          { id: 'spa', name: 'Spanish', code: 'ES' },
+          { id: 'hin', name: 'Hindi', code: 'HI' },
+          { id: 'ara', name: 'Arabic', code: 'AR' }
+        ];
+        
+        languageButtons.innerHTML = '';
+        
+        languages.forEach(lang => {
+          const button = document.createElement('button');
+          button.textContent = `${lang.name} (${lang.code})`;
+          button.setAttribute('data-lang', lang.id);
+          button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            document.querySelectorAll('.language-buttons button').forEach(btn => {
+              btn.classList.remove('active');
+            });
+            // Add active class to clicked button
+            this.classList.add('active');
+            console.log(`Selected language: ${lang.name}`);
+            // Here you would typically switch the stream based on language
+          });
+          languageButtons.appendChild(button);
+        });
+        
+        // Activate first language by default
+        if (languageButtons.firstChild) {
+          languageButtons.firstChild.classList.add('active');
+        }
+      }
+      
+      // Simulate loading delay and initialize player
+      setTimeout(initializePlayer, 1000);
+      
+      // Modal functionality
+      const modal = document.getElementById('skpop');
+      const closeModal = document.getElementById('closeModal');
+      const joinChannel = document.getElementById('joinChannel');
+      const alreadyJoined = document.getElementById('alreadyJoined');
+      
+      // Show modal after 5 seconds
+      setTimeout(() => {
+        modal.classList.remove('hidden');
+      }, 5000);
+      
+      closeModal.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+      
+      joinChannel.addEventListener('click', () => {
+        window.open('https://t.me/cine_arena', '_blank');
+        modal.classList.add('hidden');
+      });
+      
+      alreadyJoined.addEventListener('click', () => {
+        modal.classList.add('hidden');
+      });
+      
+      // Close modal when clicking outside
+      window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    });
+  </script>
 </body>
 </html>
