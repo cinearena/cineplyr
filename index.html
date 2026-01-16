@@ -7,11 +7,8 @@
   <meta name="referrer" content="no-referrer">
   <title>CineArena.Live</title>
 
-  <!-- External player CSS -->
+  <!-- External Libraries -->
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.css">
-  
-  <!-- Shaka Player CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.css" crossorigin="anonymous">
 
   <!-- Responsive CSS with Sky Gradient Theme -->
@@ -20,14 +17,13 @@
       /* Sky Gradient Colors */
       --sky-light: #52A7E0;
       --sky-medium: #41B8F1;
-      --sky-dark: #2E9FCF;
       --sky-darker: #1E8BC3;
-      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-dark) 100%);
-      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-dark) 50%, var(--sky-darker) 100%);
+      --sky-gradient: linear-gradient(135deg, var(--sky-light) 0%, var(--sky-medium) 50%, var(--sky-darker) 100%);
+      --sky-gradient-hover: linear-gradient(135deg, var(--sky-medium) 0%, var(--sky-darker) 50%, #1E8BC3 100%);
       
       /* Theme Colors */
       --primary-color: var(--sky-medium);
-      --secondary-color: var(--sky-dark);
+      --secondary-color: var(--sky-darker);
       --accent-color: #FFA726;
       --background-color: #0A1929;
       --surface-color: #132F4C;
@@ -41,10 +37,10 @@
       /* Spacing */
       --spacing-xs: 4px;
       --spacing-sm: 8px;
-      --spacing-md: 16px;
-      --spacing-lg: 24px;
-      --spacing-xl: 32px;
-      --spacing-xxl: 48px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --spacing-xxl: 24px;
     }
 
     * {
@@ -62,9 +58,10 @@
       background-image: 
         radial-gradient(circle at 20% 80%, rgba(82, 167, 224, 0.1) 0%, transparent 50%),
         radial-gradient(circle at 80% 20%, rgba(65, 184, 241, 0.1) 0%, transparent 50%);
+      overflow-x: hidden;
     }
 
-    /* Header Styles */
+    /* Header Styles - Mobile First */
     #topHeader {
       background: var(--header-bg);
       backdrop-filter: blur(10px);
@@ -72,20 +69,20 @@
       position: sticky;
       top: 0;
       z-index: 1000;
+      padding: var(--spacing-xs) var(--spacing-sm);
     }
 
     .header-inner {
-      max-width: 1400px;
+      max-width: 100%;
       margin: 0 auto;
-      padding: var(--spacing-sm) var(--spacing-md);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: var(--spacing-md);
+      gap: var(--spacing-sm);
     }
 
     .logo {
-      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      font-size: 1.4rem;
       font-weight: 800;
       text-decoration: none;
       color: white;
@@ -96,20 +93,28 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .logo small {
-      font-size: 0.6em;
+      font-size: 0.5em;
       font-weight: 600;
       opacity: 0.8;
       margin-left: var(--spacing-xs);
     }
 
-    .telegram-join {
+    .header-actions {
       display: flex;
       align-items: center;
       gap: var(--spacing-sm);
-      padding: var(--spacing-sm) var(--spacing-lg);
+    }
+
+    .telegram-join {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
       background: var(--sky-gradient);
       color: white;
       text-decoration: none;
@@ -118,6 +123,7 @@
       transition: var(--transition);
       border: 2px solid transparent;
       white-space: nowrap;
+      font-size: 0.9rem;
     }
 
     .telegram-join:hover {
@@ -127,37 +133,114 @@
       border-color: rgba(255, 255, 255, 0.2);
     }
 
+    .telegram-join svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+
+    .telegram-join .label {
+      display: inline;
+    }
+
     /* Main Content */
     .main-wrap {
-      max-width: 1400px;
+      max-width: 100%;
       margin: 0 auto;
-      padding: var(--spacing-md);
+      padding: var(--spacing-sm);
+      min-height: calc(100vh - 70px);
+      display: flex;
+      flex-direction: column;
     }
 
     .container {
       background: var(--surface-color);
-      border-radius: 20px;
-      padding: var(--spacing-lg);
+      border-radius: 12px;
+      padding: var(--spacing-md);
       box-shadow: var(--card-shadow);
       border: 1px solid rgba(65, 184, 241, 0.1);
-      margin-bottom: var(--spacing-lg);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
     }
 
-    /* Player Container */
+    /* Loader */
+    .loader {
+      text-align: center;
+      padding: var(--spacing-xxl) 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(65, 184, 241, 0.2);
+      border-top-color: var(--sky-medium);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: var(--spacing-md);
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Player Container - RESPONSIVE HEIGHTS */
     .player-container {
       position: relative;
       width: 100%;
-      margin-bottom: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      display: none;
+      /* Mobile first: smaller height */
+      height: 220px;
+    }
+
+    /* Responsive height adjustments */
+    @media (min-width: 375px) {
+      .player-container {
+        height: 240px;
+      }
+    }
+
+    @media (min-width: 480px) {
+      .player-container {
+        height: 270px;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .player-container {
+        height: 350px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .player-container {
+        height: 450px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .player-container {
+        height: 500px;
+      }
     }
 
     #player {
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: 0;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 100%;
       background: #000;
-      border-radius: 12px;
-      overflow: hidden;
     }
 
     #player video,
@@ -169,6 +252,51 @@
       width: 100%;
       height: 100%;
       border: none;
+      background: #000;
+    }
+
+    /* Hide native controls */
+    video::-webkit-media-controls {
+      display: none !important;
+    }
+
+    /* Video placeholder */
+    .video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(10, 25, 41, 0.9), rgba(19, 47, 76, 0.9));
+      color: var(--text-color);
+      text-align: center;
+      padding: var(--spacing-md);
+      z-index: 1;
+    }
+
+    .video-placeholder svg {
+      width: 50px;
+      height: 50px;
+      margin-bottom: var(--spacing-sm);
+      fill: var(--sky-medium);
+      opacity: 0.5;
+    }
+
+    .video-placeholder h3 {
+      margin-bottom: var(--spacing-sm);
+      font-size: 1.1rem;
+      color: var(--sky-light);
+    }
+
+    .video-placeholder p {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      max-width: 280px;
+      line-height: 1.4;
     }
 
     .custom-shaka-spinner-container {
@@ -177,39 +305,37 @@
       left: 0;
       width: 100%;
       height: 100%;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.8);
       z-index: 10;
     }
 
     .custom-shaka-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(65, 184, 241, 0.2);
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(65, 184, 241, 0.2);
       border-top-color: var(--sky-medium);
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
     /* Category Tabs */
     .category-tabs {
-      display: flex;
-      gap: var(--spacing-sm);
-      margin-bottom: var(--spacing-lg);
+      display: none;
+      gap: var(--spacing-xs);
+      margin-bottom: var(--spacing-md);
       overflow-x: auto;
-      padding: var(--spacing-sm) 0;
+      padding: var(--spacing-xs) 0;
       scrollbar-width: thin;
       scrollbar-color: var(--sky-medium) transparent;
+      flex-shrink: 0;
+      -webkit-overflow-scrolling: touch;
     }
 
     .category-tabs::-webkit-scrollbar {
-      height: 6px;
+      height: 3px;
     }
 
     .category-tabs::-webkit-scrollbar-track {
@@ -218,26 +344,29 @@
 
     .category-tabs::-webkit-scrollbar-thumb {
       background: var(--sky-medium);
-      border-radius: 3px;
+      border-radius: 1.5px;
     }
 
     .category-tab {
-      padding: var(--spacing-sm) var(--spacing-lg);
+      padding: 6px 12px;
       background: rgba(65, 184, 241, 0.1);
-      border: 2px solid rgba(65, 184, 241, 0.3);
-      border-radius: 50px;
+      border: 1px solid rgba(65, 184, 241, 0.3);
+      border-radius: 20px;
       color: var(--text-color);
       font-weight: 600;
       cursor: pointer;
       transition: var(--transition);
       white-space: nowrap;
       flex-shrink: 0;
+      font-size: 0.85rem;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
     }
 
     .category-tab:hover {
       background: rgba(65, 184, 241, 0.2);
       border-color: var(--sky-medium);
-      transform: translateY(-2px);
     }
 
     .category-tab.active {
@@ -248,17 +377,34 @@
 
     /* Stream Buttons */
     .stream-buttons {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: var(--spacing-md);
-      margin-top: var(--spacing-lg);
+      display: none;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+      flex-shrink: 0;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .stream-buttons::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .stream-buttons::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .stream-buttons::-webkit-scrollbar-thumb {
+      background: var(--sky-medium);
+      border-radius: 2px;
     }
 
     .stream-button {
-      padding: var(--spacing-md);
+      padding: 8px 10px;
       background: rgba(65, 184, 241, 0.1);
-      border: 2px solid rgba(65, 184, 241, 0.3);
-      border-radius: 12px;
+      border: 1px solid rgba(65, 184, 241, 0.3);
+      border-radius: 8px;
       color: var(--text-color);
       font-weight: 600;
       cursor: pointer;
@@ -266,52 +412,71 @@
       text-align: center;
       position: relative;
       overflow: hidden;
+      font-size: 0.85rem;
+      min-height: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     .stream-button:hover {
       background: rgba(65, 184, 241, 0.2);
       border-color: var(--sky-medium);
-      transform: translateY(-2px);
+      transform: translateY(-1px);
     }
 
     .stream-button.active {
       background: var(--sky-gradient);
       border-color: transparent;
       color: white;
-      box-shadow: 0 4px 20px rgba(65, 184, 241, 0.3);
+      box-shadow: 0 4px 12px rgba(65, 184, 241, 0.3);
     }
 
+    /* Stream badges */
     .stream-badge {
       position: absolute;
-      top: 8px;
-      right: 8px;
-      padding: 2px 8px;
+      top: 4px;
+      right: 4px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    .badge-iframe {
+      background: rgba(66, 184, 241, 0.2);
+      border: 1px solid var(--sky-medium);
+      color: var(--sky-light);
+    }
+
+    .badge-mpd {
       background: rgba(255, 167, 38, 0.2);
       border: 1px solid var(--accent-color);
-      border-radius: 4px;
-      font-size: 0.75rem;
       color: var(--accent-color);
     }
 
-    /* Stream Type Indicators */
-    .stream-type {
-      display: inline-block;
-      padding: 2px 8px;
-      background: rgba(82, 167, 224, 0.2);
-      border-radius: 4px;
-      font-size: 0.8rem;
-      margin-top: var(--spacing-xs);
-      color: var(--sky-light);
+    .badge-hls {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4CAF50;
+      color: #4CAF50;
+    }
+
+    .badge-drm {
+      background: rgba(156, 39, 176, 0.2);
+      border: 1px solid #9C27B0;
+      color: #9C27B0;
     }
 
     /* Info Panel */
     .info-panel {
       background: rgba(65, 184, 241, 0.05);
       border: 1px solid rgba(65, 184, 241, 0.1);
-      border-radius: 12px;
-      padding: var(--spacing-md);
-      margin-top: var(--spacing-lg);
+      border-radius: 8px;
+      padding: var(--spacing-sm);
+      margin-top: var(--spacing-md);
       display: none;
+      flex-shrink: 0;
     }
 
     .info-panel.visible {
@@ -324,121 +489,224 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Loader and Error States */
-    .loader {
-      text-align: center;
-      padding: var(--spacing-xxl) 0;
+    .info-panel h3 {
+      font-size: 0.95rem;
+      margin-bottom: 6px;
     }
 
-    .loader-spinner {
-      width: 60px;
-      height: 60px;
-      border: 4px solid rgba(65, 184, 241, 0.2);
-      border-top-color: var(--sky-medium);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
+    /* Error Message */
     .error-message {
       text-align: center;
-      padding: var(--spacing-xxl) var(--spacing-md);
+      padding: var(--spacing-lg) var(--spacing-md);
       background: rgba(255, 107, 107, 0.1);
       border: 1px solid rgba(255, 107, 107, 0.3);
-      border-radius: 12px;
-      margin: var(--spacing-lg) 0;
+      border-radius: 8px;
+      margin: var(--spacing-md) 0;
+      flex-shrink: 0;
+      display: none;
     }
 
     .error-message h2 {
-      color: #FF6B6B;
-      margin-bottom: var(--spacing-md);
-      font-size: 1.8rem;
+      font-size: 1.2rem;
+      margin-bottom: var(--spacing-sm);
     }
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: 2000;
+    /* Refresh Button */
+    .refresh-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--sky-gradient);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      padding: var(--spacing-md);
-    }
-
-    .modal-content {
-      background: var(--surface-color);
-      border-radius: 20px;
-      padding: var(--spacing-xl);
-      max-width: 500px;
-      width: 100%;
-      border: 1px solid rgba(65, 184, 241, 0.2);
-      position: relative;
-    }
-
-    #closeModal {
-      position: absolute;
-      top: var(--spacing-md);
-      right: var(--spacing-md);
-      color: var(--text-secondary);
-      font-size: 28px;
-      cursor: pointer;
-      background: none;
-      border: none;
+      z-index: 20;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       transition: var(--transition);
+      display: none;
     }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      .header-inner {
-        flex-direction: column;
-        text-align: center;
-        padding: var(--spacing-md);
-      }
+    .refresh-btn:hover {
+      transform: rotate(180deg);
+      background: var(--sky-gradient-hover);
+    }
 
-      .main-wrap {
-        padding: var(--spacing-sm);
-      }
+    .refresh-btn svg {
+      width: 18px;
+      height: 18px;
+    }
 
+    /* Mobile optimizations */
+    @media (max-width: 767px) {
       .container {
-        padding: var(--spacing-md);
-      }
-
-      #player {
-        padding-bottom: 56.25%;
-      }
-
-      .stream-buttons {
-        grid-template-columns: 1fr;
-      }
-
-      .category-tabs {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .stream-button {
         padding: var(--spacing-sm);
       }
       
-      .category-tab {
-        padding: var(--spacing-xs) var(--spacing-md);
-        font-size: 0.9rem;
+      .stream-buttons {
+        gap: 6px;
+        max-height: 160px;
+      }
+      
+      @media (max-width: 360px) {
+        .stream-buttons {
+          grid-template-columns: 1fr;
+        }
+        
+        .player-container {
+          height: 200px;
+        }
+      }
+      
+      @media (max-height: 500px) and (orientation: landscape) {
+        .player-container {
+          height: 180px;
+        }
+        
+        .stream-buttons {
+          max-height: 120px;
+        }
+        
+        .video-placeholder {
+          padding: var(--spacing-sm);
+        }
+        
+        .video-placeholder svg {
+          width: 40px;
+          height: 40px;
+          margin-bottom: 8px;
+        }
+        
+        .video-placeholder h3 {
+          font-size: 1rem;
+          margin-bottom: 4px;
+        }
+        
+        .video-placeholder p {
+          font-size: 0.8rem;
+          line-height: 1.3;
+        }
       }
     }
 
-    /* Bottom CTA */
-    .bottom-cta {
-      max-width: 1400px;
-      margin: var(--spacing-lg) auto;
-      padding: 0 var(--spacing-md);
-      text-align: center;
+    /* Tablet and Desktop */
+    @media (min-width: 768px) {
+      #topHeader {
+        padding: var(--spacing-sm) var(--spacing-md);
+      }
+      
+      .logo {
+        font-size: 1.5rem;
+      }
+      
+      .telegram-join {
+        padding: 6px 14px;
+        font-size: 0.95rem;
+      }
+      
+      .main-wrap {
+        padding: var(--spacing-md);
+      }
+      
+      .container {
+        padding: var(--spacing-lg);
+        border-radius: 16px;
+      }
+      
+      .category-tab {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      
+      .stream-button {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        min-height: 60px;
+      }
+      
+      .stream-buttons {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        max-height: 200px;
+      }
+      
+      .refresh-btn {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .refresh-btn svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      #topHeader {
+        padding: var(--spacing-sm) 40px;
+      }
+      
+      .header-inner {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .logo {
+        font-size: 1.8rem;
+      }
+      
+      .telegram-join {
+        padding: 8px 20px;
+        font-size: 1rem;
+      }
+      
+      .main-wrap {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: var(--spacing-lg);
+        padding-top: var(--spacing-md);
+      }
+      
+      .container {
+        padding: var(--spacing-xl);
+        border-radius: 20px;
+        gap: var(--spacing-md);
+      }
+      
+      .category-tabs {
+        margin-bottom: var(--spacing-lg);
+      }
+      
+      .category-tab {
+        padding: 10px 20px;
+        font-size: 1rem;
+      }
+      
+      .stream-buttons {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: var(--spacing-md);
+        margin-top: var(--spacing-lg);
+        max-height: 250px;
+      }
+      
+      .stream-button {
+        padding: 12px 16px;
+        font-size: 1rem;
+        border-radius: 10px;
+      }
+      
+      .bottom-cta {
+        margin: var(--spacing-md) 0;
+      }
+      
+      .bottom-cta .telegram-join {
+        padding: 10px 24px;
+        font-size: 1rem;
+      }
     }
 
     /* Utility Classes */
@@ -448,6 +716,30 @@
 
     .visible {
       display: block !important;
+    }
+    
+    .flex {
+      display: flex !important;
+    }
+    
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+      .stream-button:hover {
+        transform: none;
+      }
+      
+      .telegram-join:hover {
+        transform: none;
+      }
+      
+      .category-tab:hover {
+        background: rgba(65, 184, 241, 0.1);
+      }
+      
+      .stream-button:active {
+        background: rgba(65, 184, 241, 0.2);
+        transform: scale(0.98);
+      }
     }
   </style>
 </head>
@@ -469,15 +761,37 @@
 
   <div class="main-wrap" id="mainWrap">
     <div class="container" id="mainContent" role="main">
+      <!-- Loader -->
+      <div id="pageLoader" class="loader">
+        <div class="loader-spinner"></div>
+        <p>Loading Streams...</p>
+      </div>
+
+      <!-- Refresh Button -->
+      <button id="refreshBtn" class="refresh-btn" title="Refresh streams">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+          <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
+      </button>
+
       <!-- Category Tabs -->
       <div class="category-tabs" id="categoryTabs"></div>
 
       <!-- Player Area -->
-      <div class="player-container">
+      <div class="player-container" id="playerContainer">
         <div id="player">
+          <!-- Video placeholder -->
+          <div class="video-placeholder" id="videoPlaceholder">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            </svg>
+            <h3>Select a Stream</h3>
+            <p>Choose a category and select a stream to start watching</p>
+          </div>
+          <!-- Loading spinner -->
           <div class="custom-shaka-spinner-container" id="customSpinner">
             <div class="custom-shaka-spinner"></div>
-            <div style="color: white; margin-top: 80px; position: absolute;">Loading stream...</div>
+            <div style="color: white; margin-top: 50px; position: absolute; font-size: 0.9rem;">Loading stream...</div>
           </div>
         </div>
       </div>
@@ -488,197 +802,302 @@
       <!-- Info Panel -->
       <div class="info-panel" id="infoPanel">
         <h3>Stream Information</h3>
-        <div id="streamInfo"></div>
+        <div id="streamInfo" style="font-size: 0.85rem;"></div>
       </div>
 
       <!-- Error Message -->
-      <div id="errorMessage" class="error-message hidden" role="status" aria-live="polite">
-        <h2>Unable to Load Stream</h2>
-        <p>Please try selecting a different stream or check your connection.</p>
+      <div id="errorMessage" class="error-message" role="status" aria-live="polite">
+        <h2>Unable to Load Streams</h2>
+        <p style="font-size: 0.9rem;">Failed to load streams from server. Please try again later.</p>
+        <button id="retryBtn" style="margin-top: 10px; padding: 8px 16px; background: var(--sky-gradient); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+          Retry Loading
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- Bottom CTA -->
   <div class="bottom-cta">
     <a class="telegram-join" href="https://t.me/cine_arena" target="_blank" rel="noopener noreferrer">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:20px;height:20px;margin-right:10px;">
-      Join Telegram Channel
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v9/icons/telegram.svg" alt="" style="width:18px;height:18px;margin-right:8px;">
+      Join Telegram Channel for Updates
     </a>
   </div>
 
-  <!-- External scripts -->
+  <!-- External Libraries -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dplayer@1.26.0/dist/DPlayer.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
 
   <!-- Main Application Script -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('CineArena Player Initializing...');
+      console.log('CineArena Multi-Stream Player Initializing...');
       
       // DOM Elements
-      const playerContainer = document.getElementById('player');
+      const pageLoader = document.getElementById('pageLoader');
       const categoryTabs = document.getElementById('categoryTabs');
+      const playerContainer = document.getElementById('playerContainer');
+      const player = document.getElementById('player');
+      const videoPlaceholder = document.getElementById('videoPlaceholder');
       const streamButtons = document.getElementById('streamButtons');
       const infoPanel = document.getElementById('infoPanel');
       const streamInfo = document.getElementById('streamInfo');
       const errorMessage = document.getElementById('errorMessage');
       const customSpinner = document.getElementById('customSpinner');
+      const refreshBtn = document.getElementById('refreshBtn');
+      const retryBtn = document.getElementById('retryBtn');
       
-      // Your JSON data (can be loaded from external file)
-      const streamsData = {
-        "wpl": {
-          "Jio-Hotstar [Hindi]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-            "type": "iframe"
-          },
-          "Willow [iOS]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-            "type": "iframe"
-          },
-          "WILLOW SD": {
-            "url": "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/sq3nwcl4j4/out/v1/41930b7349364099bb1b4ef153032937/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "4ae41f5965180707b310360dc5060c09",
-            "key": "f78d1ba450f7ff87f215eb472cb4e17e"
-          }   
-        },
-        "u19": {
-          "Hindi": {
-            "url": "https://cinearena.github.io/id/sports.html?id=Star2HINDISD",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          },
-          "WILLOW": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/etebjbu25h/out/v1/935090e6afe6461594b16a907ce1c30b/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "98b8700f64cb7149fc4695c66b7d8687",
-            "key": "3f67576ea915c603c13aed959474bea8"
-          },
-          "PRIME": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash-sd/enc/khizze9pef/out/v1/89aee82791d94c9ea9eb181b74f9ec4e/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "a7a854393efeeb6067fd79b0cf2bad85",
-            "key": "6bcbb19ef718eb4c965afa3a1f088f2f"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          }
-        },
-        "bbl": {
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/immypkxb41/out/v1/e1171079305c49d59de570bd64ca3e6c/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "c289847d4b541aa61780898dfb403560",
-            "key": "2182da5f65ee33e2b3bb32d82d19ce49"
-          },
-          "CRICLIFE": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          }
-        },
-        "criclife": {
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          }
-        },
-        "willow-fhd": {
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/8yefqdbchb/out/v1/8f25823809304e1a9d165a8305ca08e4/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "c5c42ff75cd4d0dd36979a32e6a433ef",
-            "key": "778d91970da4cfd11c8c727d667785b6"
-          }
-        },
-        "sa20": {
-          "Geo Super": {
-            "url": "https://ml-pull-dvc-myco.io:2096/GEO_SUPER/index.m3u8",
-            "type": "hls",
-            "keyId": "ce49fc405dd3c8a7783d8597fc1c68cd",
-            "key": "7022f11d572084a82fd0b883703ed1b5"
-          },
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          }
-        },
-        "indnz": {
-          "HINDI": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://dillzy.cricketstream745.workers.dev/live.m3u8",
-            "type": "iframe",
-            "keyId": "192b1115da041585c77200128549efa1",
-            "key": "634e10efe4abbb14be400a3ccbac0258"
-          },
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          },
-          "WILLOW SD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/vedlscjezi/out/v1/1a69808f3f44461ea89171d443225492/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "5692feb4f680daf79dffe3497f469b79",
-            "key": "e358d00ea61053235c674b2ede952fcd"
-          },
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/ctipfgkjyw/out/v1/c934f6d404ad4a75bf9deb4142e66005/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "24bb1d301ddd62a816b2eba502f20c36",
-            "key": "3fbcde068cd0c81823db589fa8b21bca"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          }
-        },
-        "willow": {
-          "WILLOW ADS FREE": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/njsiktakqy/out/v1/b25ec77dd6d547d68df6d07f165896ff/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "dd94299841023377b7302276118a971b",
-            "key": "b0e803fe7d4c136d0ba8eac091a032b7"
-          }
-        },
-        "willowios": {
-          "Willow [iOS]": {
-            "url": "https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-            "type": "hls"
-          }
-        }
+      // Configuration
+      const CONFIG = {
+        jsonUrl: 'https://raw.githubusercontent.com/cinearena/json/main/ipl.json', // Your JSON URL
+        cacheTime: 10 * 60 * 1000, // 10 minutes cache
+        retryCount: 3,
+        retryDelay: 2000
       };
-
+      
       // State variables
+      let streamsData = null;
       let currentCategory = null;
       let currentStream = null;
       let currentPlayer = null;
+      let shakaPlayerInstance = null;
+      let hlsInstance = null;
+      let plyrInstance = null;
+      
+      // Initialize application
+      async function initializeApp() {
+        console.log('Fetching streams from:', CONFIG.jsonUrl);
+        await loadStreamsData();
+      }
+      
+      // Load streams data from JSON
+      async function loadStreamsData() {
+        try {
+          showLoader();
+          
+          const data = await fetchWithRetry(CONFIG.jsonUrl, CONFIG.retryCount);
+          
+          if (data && typeof data === 'object') {
+            streamsData = data;
+            console.log('Successfully loaded streams:', Object.keys(streamsData));
+            
+            hideLoader();
+            initializeUI();
+            saveToLocalStorage(data);
+            
+            showNotification('Streams loaded successfully!', 'success');
+            
+          } else {
+            throw new Error('Invalid data format');
+          }
+          
+        } catch (error) {
+          console.error('Failed to load streams:', error);
+          
+          // Try cache
+          const cachedData = loadFromLocalStorage();
+          if (cachedData) {
+            console.log('Using cached data');
+            streamsData = cachedData;
+            hideLoader();
+            initializeUI();
+            showNotification('Using cached data', 'warning');
+          } else {
+            // Use fallback data matching your format
+            streamsData = getFallbackData();
+            hideLoader();
+            initializeUI();
+            showNotification('Using fallback streams', 'error');
+          }
+          
+          showError('Failed to load latest streams. Using cached data.');
+        }
+      }
+      
+      // Fallback data matching your exact JSON format
+      function getFallbackData() {
+        return {
+          "wpl": {
+            "Jio-Hotstar [Hindi]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
+              "type": "iframe"
+            },
+            "Willow [iOS]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+              "type": "iframe"
+            }
+          },
+          "test": {
+            "Test Stream": {
+              "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "type": "iframe"
+            }
+          }
+        };
+      }
+      
+      // Fetch with retry
+      async function fetchWithRetry(url, retries) {
+        for (let i = 0; i < retries; i++) {
+          try {
+            console.log(`Fetch attempt ${i + 1}`);
+            
+            const cacheBuster = new Date().getTime();
+            const fetchUrl = `${url}?t=${cacheBuster}`;
+            
+            const response = await fetch(fetchUrl, {
+              headers: {
+                'Accept': 'application/json',
+                'Cache-Control': 'no-cache'
+              },
+              cache: 'no-cache',
+              mode: 'cors'
+            });
+            
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
+            
+          } catch (error) {
+            console.warn(`Attempt ${i + 1} failed:`, error.message);
+            
+            if (i < retries - 1) {
+              await new Promise(resolve => setTimeout(resolve, CONFIG.retryDelay));
+            } else {
+              throw error;
+            }
+          }
+        }
+      }
+      
+      // LocalStorage functions
+      function saveToLocalStorage(data) {
+        try {
+          const cacheData = {
+            data: data,
+            timestamp: new Date().getTime()
+          };
+          localStorage.setItem('cinearena_streams', JSON.stringify(cacheData));
+        } catch (error) {
+          console.warn('Failed to save to localStorage:', error);
+        }
+      }
+      
+      function loadFromLocalStorage() {
+        try {
+          const cached = localStorage.getItem('cinearena_streams');
+          if (!cached) return null;
+          
+          const cacheData = JSON.parse(cached);
+          const now = new Date().getTime();
+          
+          if (now - cacheData.timestamp < CONFIG.cacheTime) {
+            return cacheData.data;
+          }
+          
+          return null;
+        } catch (error) {
+          console.warn('Failed to load from localStorage:', error);
+          return null;
+        }
+      }
+      
+      // UI Helper functions
+      function showLoader() {
+        pageLoader.style.display = 'flex';
+        errorMessage.style.display = 'none';
+        playerContainer.style.display = 'none';
+        categoryTabs.style.display = 'none';
+        streamButtons.style.display = 'none';
+        refreshBtn.style.display = 'none';
+      }
+      
+      function hideLoader() {
+        pageLoader.style.display = 'none';
+      }
+      
+      function showError(message) {
+        errorMessage.style.display = 'block';
+        if (message) {
+          errorMessage.querySelector('p').textContent = message;
+        }
+      }
+      
+      function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+          position: fixed;
+          top: 70px;
+          right: 10px;
+          padding: 12px 16px;
+          background: ${type === 'error' ? '#dc2626' : type === 'warning' ? '#f59e0b' : '#10b981'};
+          color: white;
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          z-index: 1001;
+          animation: slideIn 0.3s ease;
+          max-width: 300px;
+          font-size: 0.9rem;
+        `;
+        
+        notification.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span>${message}</span>
+            <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px; margin-left: 8px; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">×</button>
+          </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 4000);
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+        `;
+        document.head.appendChild(style);
+      }
       
       // Initialize UI
       function initializeUI() {
-        console.log('Initializing UI...');
+        if (!streamsData || Object.keys(streamsData).length === 0) {
+          showError('No streams available. Please try again later.');
+          return;
+        }
+        
+        // Show UI elements
+        categoryTabs.style.display = 'flex';
+        playerContainer.style.display = 'block';
+        streamButtons.style.display = 'grid';
+        refreshBtn.style.display = 'flex';
+        errorMessage.style.display = 'none';
         
         // Create category tabs
+        createCategoryTabs();
+        
+        // Select first category
+        const firstCategory = Object.keys(streamsData)[0];
+        if (firstCategory) {
+          selectCategory(firstCategory);
+        }
+      }
+      
+      function createCategoryTabs() {
+        categoryTabs.innerHTML = '';
+        
         Object.keys(streamsData).forEach(category => {
           const tab = document.createElement('div');
           tab.className = 'category-tab';
@@ -691,18 +1110,9 @@
           
           categoryTabs.appendChild(tab);
         });
-        
-        // Select first category by default
-        const firstCategory = Object.keys(streamsData)[0];
-        if (firstCategory) {
-          selectCategory(firstCategory);
-        }
       }
       
-      // Select category
       function selectCategory(category) {
-        console.log('Selecting category:', category);
-        
         // Update active tab
         document.querySelectorAll('.category-tab').forEach(tab => {
           tab.classList.remove('active');
@@ -710,46 +1120,56 @@
         document.querySelector(`[data-category="${category}"]`).classList.add('active');
         
         currentCategory = category;
-        
-        // Create stream buttons for this category
         createStreamButtons(category);
         
-        // Hide info panel
+        infoPanel.style.display = 'none';
         infoPanel.classList.remove('visible');
         
-        // Clear player if no stream selected
-        clearPlayer();
+        videoPlaceholder.style.display = 'flex';
+        clearCurrentPlayer();
       }
       
-      // Create stream buttons for category
       function createStreamButtons(category) {
-        console.log('Creating stream buttons for:', category);
-        
         streamButtons.innerHTML = '';
         const streams = streamsData[category];
+        
+        if (!streams) {
+          console.error('No streams found for category:', category);
+          return;
+        }
         
         Object.keys(streams).forEach(streamName => {
           const stream = streams[streamName];
           const button = document.createElement('div');
           button.className = 'stream-button';
+          
+          // Get badge class based on stream type
+          const badgeClass = getBadgeClass(stream.type, stream.keyId);
+          
           button.innerHTML = `
-            ${streamName}
-            <div class="stream-type">${stream.type}</div>
-            ${stream.keyId ? '<span class="stream-badge">DRM</span>' : ''}
+            <div>${streamName}</div>
+            ${badgeClass ? `<span class="stream-badge ${badgeClass}">${stream.type.toUpperCase()}</span>` : ''}
           `;
           
-          button.addEventListener('click', () => {
-            selectStream(category, streamName, stream);
+          button.addEventListener('click', (e) => {
+            selectStream(category, streamName, stream, e);
           });
           
           streamButtons.appendChild(button);
         });
       }
       
-      // Select stream
-      async function selectStream(category, streamName, streamData) {
-        console.log('Selecting stream:', streamName);
-        
+      function getBadgeClass(type, hasDrm) {
+        if (hasDrm) return 'badge-drm';
+        switch(type) {
+          case 'iframe': return 'badge-iframe';
+          case 'mpd-shaka': return 'badge-mpd';
+          case 'hls': return 'badge-hls';
+          default: return 'badge-iframe';
+        }
+      }
+      
+      async function selectStream(category, streamName, streamData, event) {
         // Update active button
         document.querySelectorAll('.stream-button').forEach(btn => {
           btn.classList.remove('active');
@@ -758,227 +1178,374 @@
         
         currentStream = { category, name: streamName, data: streamData };
         
-        // Show loading spinner
+        // Hide placeholder and show loading spinner
+        videoPlaceholder.style.display = 'none';
         customSpinner.style.display = 'flex';
-        errorMessage.classList.add('hidden');
+        errorMessage.style.display = 'none';
         
-        // Load stream
         try {
           await loadStream(streamData);
           
-          // Update info panel
           updateInfoPanel(category, streamName, streamData);
+          infoPanel.style.display = 'block';
           infoPanel.classList.add('visible');
+          
+          showNotification(`Playing: ${streamName}`, 'success');
+          
         } catch (error) {
           console.error('Error loading stream:', error);
-          errorMessage.classList.remove('hidden');
+          showError(`Failed to load: ${streamName}. Try another stream.`);
           customSpinner.style.display = 'none';
+          videoPlaceholder.style.display = 'flex';
         }
       }
       
-      // Load stream based on type
       async function loadStream(streamData) {
-        console.log('Loading stream type:', streamData.type);
+        console.log('Loading stream type:', streamData.type, 'URL:', streamData.url);
         
-        // Clear existing player
-        clearPlayer();
+        clearCurrentPlayer();
         
-        switch(streamData.type) {
+        const streamType = streamData.type || 'iframe';
+        
+        switch(streamType) {
           case 'iframe':
-            await loadIframeStream(streamData);
-            break;
+            return loadIframeStream(streamData);
             
           case 'mpd-shaka':
-            await loadMpdShakaStream(streamData);
-            break;
+            return loadMpdShakaStream(streamData);
             
           case 'hls':
-            await loadHlsStream(streamData);
-            break;
+            return loadHlsStream(streamData);
             
           default:
-            throw new Error(`Unsupported stream type: ${streamData.type}`);
+            // Default to iframe
+            return loadIframeStream(streamData);
         }
-        
-        // Hide spinner after a delay
-        setTimeout(() => {
-          customSpinner.style.display = 'none';
-        }, 1000);
       }
       
       // Load iframe stream
       function loadIframeStream(streamData) {
-        return new Promise((resolve) => {
-          const iframe = document.createElement('iframe');
-          iframe.src = streamData.url;
-          iframe.allow = 'autoplay; encrypted-media; fullscreen';
-          iframe.allowFullscreen = true;
-          
-          playerContainer.appendChild(iframe);
-          currentPlayer = iframe;
-          resolve();
+        return new Promise((resolve, reject) => {
+          try {
+            const iframe = document.createElement('iframe');
+            iframe.id = 'streamIframe';
+            iframe.src = streamData.url;
+            iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.style.cssText = `
+              width: 100%;
+              height: 100%;
+              border: none;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
+            
+            iframe.setAttribute('referrerpolicy', 'no-referrer');
+            iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
+            
+            iframe.onload = () => {
+              console.log('Iframe loaded successfully');
+              customSpinner.style.display = 'none';
+              currentPlayer = iframe;
+              resolve();
+            };
+            
+            iframe.onerror = () => {
+              console.error('Iframe failed to load');
+              reject(new Error('Iframe failed to load'));
+            };
+            
+            player.appendChild(iframe);
+            
+            // Fallback timeout
+            setTimeout(() => {
+              if (customSpinner.style.display === 'flex') {
+                console.log('Iframe load timeout');
+                customSpinner.style.display = 'none';
+                currentPlayer = iframe;
+                resolve();
+              }
+            }, 5000);
+            
+          } catch (error) {
+            console.error('Error creating iframe:', error);
+            reject(error);
+          }
         });
       }
       
       // Load MPD stream with Shaka Player
       async function loadMpdShakaStream(streamData) {
-        // Check if Shaka Player is loaded
-        if (!window.shaka) {
-          throw new Error('Shaka Player not loaded');
-        }
-        
-        shaka.polyfill.installAll();
-        
-        const video = document.createElement('video');
-        video.id = 'shaka-video';
-        video.setAttribute('controls', '');
-        video.setAttribute('autoplay', '');
-        video.style.width = '100%';
-        video.style.height = '100%';
-        
-        playerContainer.appendChild(video);
-        
-        const player = new shaka.Player(video);
-        const ui = new shaka.ui.Overlay(player, playerContainer, video);
-        
-        // Configure DRM if keys are provided
-        if (streamData.keyId && streamData.key) {
-          const drmConfig = {
-            servers: {
-              'com.widevine.alpha': 'https://widevine-dash.ezdrm.com/proxy?pX=288FF5&user_id=MTAwMA=='
-            },
-            clearKeys: {
-              [streamData.keyId]: streamData.key
+        return new Promise(async (resolve, reject) => {
+          try {
+            // Check if Shaka Player is available
+            if (!window.shaka) {
+              throw new Error('Shaka Player not loaded');
             }
-          };
-          player.configure({
-            drm: drmConfig
-          });
-        }
-        
-        try {
-          await player.load(streamData.url);
-          currentPlayer = player;
-        } catch (error) {
-          console.error('Error loading MPD:', error);
-          throw error;
-        }
+            
+            // Create video element
+            const video = document.createElement('video');
+            video.id = 'shaka-video';
+            video.style.cssText = `
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
+            
+            player.appendChild(video);
+            
+            // Initialize Shaka Player
+            shaka.polyfill.installAll();
+            
+            const playerInstance = new shaka.Player(video);
+            shakaPlayerInstance = playerInstance;
+            
+            // Listen for error events
+            playerInstance.addEventListener('error', (error) => {
+              console.error('Shaka Player error:', error);
+              reject(new Error('Shaka Player error'));
+            });
+            
+            // Configure for DASH
+            playerInstance.configure({
+              drm: {
+                clearKeys: {}
+              },
+              streaming: {
+                bufferingGoal: 30,
+                rebufferingGoal: 2,
+                bufferBehind: 30
+              }
+            });
+            
+            // Add DRM keys if provided
+            if (streamData.keyId && streamData.key) {
+              playerInstance.configure({
+                drm: {
+                  clearKeys: {
+                    [streamData.keyId]: streamData.key
+                  }
+                }
+              });
+            }
+            
+            // Load the stream
+            await playerInstance.load(streamData.url);
+            
+            // Configure Plyr for UI controls
+            plyrInstance = new Plyr(video, {
+              controls: [
+                'play-large',
+                'play',
+                'progress',
+                'current-time',
+                'mute',
+                'volume',
+                'settings',
+                'fullscreen'
+              ],
+              settings: ['quality', 'speed'],
+              autoplay: true
+            });
+            
+            customSpinner.style.display = 'none';
+            currentPlayer = playerInstance;
+            resolve();
+            
+          } catch (error) {
+            console.error('Error loading MPD stream:', error);
+            reject(error);
+          }
+        });
       }
       
-      // Load HLS stream with Plyr
+      // Load HLS stream
       async function loadHlsStream(streamData) {
-        const video = document.createElement('video');
-        video.id = 'hls-video';
-        video.setAttribute('controls', '');
-        video.setAttribute('autoplay', '');
-        video.style.width = '100%';
-        video.style.height = '100%';
-        
-        playerContainer.appendChild(video);
-        
-        // Check if HLS.js is available
-        if (window.Hls && Hls.isSupported()) {
-          const hls = new Hls();
-          hls.loadSource(streamData.url);
-          hls.attachMedia(video);
-          
-          hls.on(Hls.Events.MANIFEST_PARSED, () => {
-            video.play();
-          });
-          
-          currentPlayer = hls;
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          // Native HLS support (Safari, iOS)
-          video.src = streamData.url;
-          video.addEventListener('loadedmetadata', () => {
-            video.play();
-          });
-          currentPlayer = video;
-        } else {
-          throw new Error('HLS not supported');
-        }
+        return new Promise((resolve, reject) => {
+          try {
+            // Create video element
+            const video = document.createElement('video');
+            video.id = 'hls-video';
+            video.style.cssText = `
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
+            
+            player.appendChild(video);
+            
+            // Check if HLS.js is available
+            if (window.Hls && Hls.isSupported()) {
+              // Use HLS.js
+              const hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+              });
+              
+              hlsInstance = hls;
+              
+              hls.loadSource(streamData.url);
+              hls.attachMedia(video);
+              
+              hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play();
+              });
+              
+              hls.on(Hls.Events.ERROR, (event, data) => {
+                console.error('HLS error:', data);
+                if (data.fatal) {
+                  reject(new Error('HLS fatal error'));
+                }
+              });
+              
+              // Configure Plyr for UI controls
+              plyrInstance = new Plyr(video, {
+                controls: [
+                  'play-large',
+                  'play',
+                  'progress',
+                  'current-time',
+                  'mute',
+                  'volume',
+                  'settings',
+                  'fullscreen'
+                ],
+                settings: ['quality', 'speed'],
+                autoplay: true
+              });
+              
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              // Native HLS support (Safari, iOS)
+              video.src = streamData.url;
+              video.addEventListener('loadedmetadata', () => {
+                video.play();
+              });
+              
+              // Configure Plyr for UI controls
+              plyrInstance = new Plyr(video, {
+                controls: [
+                  'play-large',
+                  'play',
+                  'progress',
+                  'current-time',
+                  'mute',
+                  'volume',
+                  'settings',
+                  'fullscreen'
+                ],
+                settings: ['quality', 'speed'],
+                autoplay: true
+              });
+              
+            } else {
+              throw new Error('HLS not supported');
+            }
+            
+            customSpinner.style.display = 'none';
+            currentPlayer = video;
+            resolve();
+            
+          } catch (error) {
+            console.error('Error loading HLS stream:', error);
+            reject(error);
+          }
+        });
       }
       
       // Clear current player
-      function clearPlayer() {
-        if (currentPlayer) {
-          if (currentPlayer instanceof shaka.Player) {
-            currentPlayer.destroy();
-          } else if (currentPlayer instanceof Hls) {
-            currentPlayer.destroy();
+      function clearCurrentPlayer() {
+        // Clear iframe
+        const iframes = player.querySelectorAll('iframe');
+        iframes.forEach(iframe => iframe.remove());
+        
+        // Clear video elements
+        const videos = player.querySelectorAll('video');
+        videos.forEach(video => video.remove());
+        
+        // Destroy Shaka Player if exists
+        if (shakaPlayerInstance) {
+          try {
+            shakaPlayerInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying Shaka Player:', e);
           }
-          currentPlayer = null;
+          shakaPlayerInstance = null;
         }
         
-        // Remove all children from player container
-        while (playerContainer.firstChild) {
-          playerContainer.removeChild(playerContainer.firstChild);
+        // Destroy HLS instance if exists
+        if (hlsInstance) {
+          try {
+            hlsInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying HLS instance:', e);
+          }
+          hlsInstance = null;
         }
         
-        // Re-add spinner container
-        const newSpinner = document.createElement('div');
-        newSpinner.className = 'custom-shaka-spinner-container';
-        newSpinner.id = 'customSpinner';
-        newSpinner.style.display = 'none';
-        newSpinner.innerHTML = `
-          <div class="custom-shaka-spinner"></div>
-          <div style="color: white; margin-top: 80px; position: absolute;">Loading stream...</div>
-        `;
-        playerContainer.appendChild(newSpinner);
+        // Destroy Plyr instance if exists
+        if (plyrInstance) {
+          try {
+            plyrInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying Plyr instance:', e);
+          }
+          plyrInstance = null;
+        }
+        
+        currentPlayer = null;
       }
       
       // Update info panel
       function updateInfoPanel(category, streamName, streamData) {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        
         const infoHTML = `
-          <p><strong>Category:</strong> ${category.toUpperCase()}</p>
+          <p><strong>Category:</strong> ${category}</p>
           <p><strong>Stream:</strong> ${streamName}</p>
-          <p><strong>Type:</strong> ${streamData.type}</p>
-          <p><strong>URL:</strong> <small>${streamData.url.substring(0, 50)}...</small></p>
-          ${streamData.keyId ? `<p><strong>DRM:</strong> Enabled</p>` : ''}
+          <p><strong>Type:</strong> ${streamData.type || 'iframe'}</p>
+          <p><strong>DRM:</strong> ${streamData.keyId ? 'Yes' : 'No'}</p>
+          <p><strong>Status:</strong> <span style="color:#4ade80;">● Live</span></p>
+          <p><strong>Time:</strong> ${timeString}</p>
         `;
         
         streamInfo.innerHTML = infoHTML;
       }
       
-      // Initialize the application
-      initializeUI();
-      
-      // Modal functionality
-      const modal = document.getElementById('skpop');
-      const closeModal = document.getElementById('closeModal');
-      const joinChannel = document.getElementById('joinChannel');
-      const alreadyJoined = document.getElementById('alreadyJoined');
-      
-      // Show modal after 10 seconds
-      setTimeout(() => {
-        if (modal) modal.style.display = 'flex';
-      }, 10000);
-      
-      if (closeModal) {
-        closeModal.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-      }
-      
-      if (joinChannel) {
-        joinChannel.addEventListener('click', () => {
-          window.open('https://t.me/cine_arena', '_blank');
-          modal.style.display = 'none';
-        });
-      }
-      
-      if (alreadyJoined) {
-        alreadyJoined.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-      }
-      
-      // Close modal when clicking outside
-      window.addEventListener('click', (event) => {
-        if (event.target === modal) {
-          modal.style.display = 'none';
-        }
+      // Event Listeners
+      refreshBtn.addEventListener('click', async () => {
+        console.log('Refreshing streams...');
+        showNotification('Refreshing streams...', 'info');
+        await loadStreamsData();
       });
+      
+      if (retryBtn) {
+        retryBtn.addEventListener('click', async () => {
+          console.log('Retrying...');
+          showNotification('Retrying to load streams...', 'info');
+          await loadStreamsData();
+        });
+      }
+      
+      // Start the application
+      initializeApp();
+      
+      // Auto-refresh every 15 minutes
+      setInterval(async () => {
+        if (document.visibilityState === 'visible') {
+          console.log('Auto-refreshing streams...');
+          await loadStreamsData();
+        }
+      }, 15 * 60 * 1000);
     });
   </script>
 </body>
