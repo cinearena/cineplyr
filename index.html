@@ -7,6 +7,10 @@
   <meta name="referrer" content="no-referrer">
   <title>CineArena.Live</title>
 
+  <!-- External Libraries -->
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/controls.css" crossorigin="anonymous">
+
   <!-- Responsive CSS with Sky Gradient Theme -->
   <style>
     :root {
@@ -195,43 +199,38 @@
       border-radius: 8px;
       overflow: hidden;
       display: none;
-      /* Mobile first: smaller height for mobile */
-      height: 220px; /* Reduced height for mobile */
+      /* Mobile first: smaller height */
+      height: 220px;
     }
 
+    /* Responsive height adjustments */
     @media (min-width: 375px) {
       .player-container {
-        height: 240px; /* Slightly taller for larger phones */
+        height: 240px;
       }
     }
 
     @media (min-width: 480px) {
       .player-container {
-        height: 270px; /* Tablet portrait */
+        height: 270px;
       }
     }
 
     @media (min-width: 768px) {
       .player-container {
-        height: 350px; /* Tablet landscape */
+        height: 350px;
       }
     }
 
     @media (min-width: 992px) {
       .player-container {
-        height: 450px; /* Small desktop */
+        height: 450px;
       }
     }
 
     @media (min-width: 1200px) {
       .player-container {
-        height: 500px; /* Large desktop */
-      }
-    }
-
-    @media (min-width: 1400px) {
-      .player-container {
-        height: 550px; /* Extra large screens */
+        height: 500px;
       }
     }
 
@@ -244,7 +243,9 @@
       background: #000;
     }
 
-    #player iframe {
+    #player video,
+    #player iframe,
+    #player .shaka-video-container {
       position: absolute;
       top: 0;
       left: 0;
@@ -252,6 +253,11 @@
       height: 100%;
       border: none;
       background: #000;
+    }
+
+    /* Hide native controls */
+    video::-webkit-media-controls {
+      display: none !important;
     }
 
     /* Video placeholder */
@@ -273,7 +279,7 @@
     }
 
     .video-placeholder svg {
-      width: 50px; /* Smaller for mobile */
+      width: 50px;
       height: 50px;
       margin-bottom: var(--spacing-sm);
       fill: var(--sky-medium);
@@ -282,13 +288,13 @@
 
     .video-placeholder h3 {
       margin-bottom: var(--spacing-sm);
-      font-size: 1.1rem; /* Smaller font for mobile */
+      font-size: 1.1rem;
       color: var(--sky-light);
     }
 
     .video-placeholder p {
       color: var(--text-secondary);
-      font-size: 0.85rem; /* Smaller font for mobile */
+      font-size: 0.85rem;
       max-width: 280px;
       line-height: 1.4;
     }
@@ -315,7 +321,7 @@
       animation: spin 1s linear infinite;
     }
 
-    /* Category Tabs - Mobile Optimized */
+    /* Category Tabs */
     .category-tabs {
       display: none;
       gap: var(--spacing-xs);
@@ -325,12 +331,11 @@
       scrollbar-width: thin;
       scrollbar-color: var(--sky-medium) transparent;
       flex-shrink: 0;
-      /* Hide scrollbar on mobile but keep functionality */
       -webkit-overflow-scrolling: touch;
     }
 
     .category-tabs::-webkit-scrollbar {
-      height: 3px; /* Thinner scrollbar */
+      height: 3px;
     }
 
     .category-tabs::-webkit-scrollbar-track {
@@ -354,7 +359,6 @@
       white-space: nowrap;
       flex-shrink: 0;
       font-size: 0.85rem;
-      /* Touch-friendly size */
       min-height: 36px;
       display: flex;
       align-items: center;
@@ -371,20 +375,20 @@
       color: white;
     }
 
-    /* Stream Buttons - Mobile Optimized */
+    /* Stream Buttons */
     .stream-buttons {
       display: none;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Smaller min-width for mobile */
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: var(--spacing-sm);
       margin-top: var(--spacing-md);
       flex-shrink: 0;
-      max-height: 180px; /* Reduced height for mobile */
+      max-height: 180px;
       overflow-y: auto;
-      padding-right: 4px; /* Space for scrollbar */
+      padding-right: 4px;
     }
 
     .stream-buttons::-webkit-scrollbar {
-      width: 4px; /* Thinner scrollbar */
+      width: 4px;
     }
 
     .stream-buttons::-webkit-scrollbar-track {
@@ -397,7 +401,7 @@
     }
 
     .stream-button {
-      padding: 8px 10px; /* Reduced padding for mobile */
+      padding: 8px 10px;
       background: rgba(65, 184, 241, 0.1);
       border: 1px solid rgba(65, 184, 241, 0.3);
       border-radius: 8px;
@@ -409,7 +413,6 @@
       position: relative;
       overflow: hidden;
       font-size: 0.85rem;
-      /* Touch-friendly */
       min-height: 50px;
       display: flex;
       flex-direction: column;
@@ -430,17 +433,42 @@
       box-shadow: 0 4px 12px rgba(65, 184, 241, 0.3);
     }
 
-    .stream-type {
-      display: inline-block;
-      padding: 1px 6px;
-      background: rgba(82, 167, 224, 0.2);
+    /* Stream badges */
+    .stream-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      padding: 2px 6px;
       border-radius: 3px;
-      font-size: 0.7rem;
-      margin-top: 3px;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+
+    .badge-iframe {
+      background: rgba(66, 184, 241, 0.2);
+      border: 1px solid var(--sky-medium);
       color: var(--sky-light);
     }
 
-    /* Info Panel - Mobile Optimized */
+    .badge-mpd {
+      background: rgba(255, 167, 38, 0.2);
+      border: 1px solid var(--accent-color);
+      color: var(--accent-color);
+    }
+
+    .badge-hls {
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid #4CAF50;
+      color: #4CAF50;
+    }
+
+    .badge-drm {
+      background: rgba(156, 39, 176, 0.2);
+      border: 1px solid #9C27B0;
+      color: #9C27B0;
+    }
+
+    /* Info Panel */
     .info-panel {
       background: rgba(65, 184, 241, 0.05);
       border: 1px solid rgba(65, 184, 241, 0.1);
@@ -462,7 +490,7 @@
     }
 
     .info-panel h3 {
-      font-size: 0.95rem; /* Smaller for mobile */
+      font-size: 0.95rem;
       margin-bottom: 6px;
     }
 
@@ -479,26 +507,11 @@
     }
 
     .error-message h2 {
-      font-size: 1.2rem; /* Smaller for mobile */
+      font-size: 1.2rem;
       margin-bottom: var(--spacing-sm);
     }
 
-    /* Bottom CTA */
-    .bottom-cta {
-      width: 100%;
-      margin: var(--spacing-sm) 0;
-      text-align: center;
-      padding: var(--spacing-sm);
-    }
-
-    .bottom-cta .telegram-join {
-      margin: 0 auto;
-      display: inline-flex;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-    }
-
-    /* Refresh Button - Mobile Optimized */
+    /* Refresh Button */
     .refresh-btn {
       position: absolute;
       top: 8px;
@@ -507,7 +520,7 @@
       color: white;
       border: none;
       border-radius: 50%;
-      width: 36px; /* Smaller for mobile */
+      width: 36px;
       height: 36px;
       cursor: pointer;
       display: flex;
@@ -516,6 +529,7 @@
       z-index: 20;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       transition: var(--transition);
+      display: none;
     }
 
     .refresh-btn:hover {
@@ -524,24 +538,21 @@
     }
 
     .refresh-btn svg {
-      width: 18px; /* Smaller icon */
+      width: 18px;
       height: 18px;
     }
 
-    /* Mobile-specific optimizations */
+    /* Mobile optimizations */
     @media (max-width: 767px) {
-      /* Reduce container padding on mobile */
       .container {
         padding: var(--spacing-sm);
       }
       
-      /* Smaller gaps on mobile */
       .stream-buttons {
         gap: 6px;
         max-height: 160px;
       }
       
-      /* Single column stream buttons on very small screens */
       @media (max-width: 360px) {
         .stream-buttons {
           grid-template-columns: 1fr;
@@ -552,10 +563,9 @@
         }
       }
       
-      /* Landscape mode adjustments */
       @media (max-height: 500px) and (orientation: landscape) {
         .player-container {
-          height: 180px; /* Even shorter in landscape */
+          height: 180px;
         }
         
         .stream-buttons {
@@ -584,7 +594,7 @@
       }
     }
 
-    /* Tablet and Desktop optimizations */
+    /* Tablet and Desktop */
     @media (min-width: 768px) {
       #topHeader {
         padding: var(--spacing-sm) var(--spacing-md);
@@ -754,11 +764,11 @@
       <!-- Loader -->
       <div id="pageLoader" class="loader">
         <div class="loader-spinner"></div>
-        <p>Loading IPL Streams...</p>
+        <p>Loading Streams...</p>
       </div>
 
       <!-- Refresh Button -->
-      <button id="refreshBtn" class="refresh-btn" title="Refresh streams" style="display: none;">
+      <button id="refreshBtn" class="refresh-btn" title="Refresh streams">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
           <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
@@ -775,8 +785,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
             </svg>
-            <h3>Select an IPL Stream</h3>
-            <p>Choose a category and select a stream to start watching IPL matches</p>
+            <h3>Select a Stream</h3>
+            <p>Choose a category and select a stream to start watching</p>
           </div>
           <!-- Loading spinner -->
           <div class="custom-shaka-spinner-container" id="customSpinner">
@@ -797,7 +807,7 @@
 
       <!-- Error Message -->
       <div id="errorMessage" class="error-message" role="status" aria-live="polite">
-        <h2>Unable to Load IPL Streams</h2>
+        <h2>Unable to Load Streams</h2>
         <p style="font-size: 0.9rem;">Failed to load streams from server. Please try again later.</p>
         <button id="retryBtn" style="margin-top: 10px; padding: 8px 16px; background: var(--sky-gradient); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
           Retry Loading
@@ -814,10 +824,16 @@
     </a>
   </div>
 
+  <!-- External Libraries -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.16.3/shaka-player.ui.js" crossorigin="anonymous"></script>
+
   <!-- Main Application Script -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      console.log('CineArena IPL Player Initializing...');
+      console.log('CineArena Multi-Stream Player Initializing...');
       
       // DOM Elements
       const pageLoader = document.getElementById('pageLoader');
@@ -835,23 +851,24 @@
       
       // Configuration
       const CONFIG = {
-        jsonUrl: 'https://raw.githubusercontent.com/cinearena/json/main/ipl.json',
+        jsonUrl: 'https://raw.githubusercontent.com/cinearena/json/main/ipl.json', // Your JSON URL
         cacheTime: 10 * 60 * 1000, // 10 minutes cache
         retryCount: 3,
-        retryDelay: 2000,
-        autoRefreshInterval: 15 * 60 * 1000 // 15 minutes
+        retryDelay: 2000
       };
       
       // State variables
       let streamsData = null;
       let currentCategory = null;
       let currentStream = null;
-      let currentIframe = null;
-      let autoRefreshTimer = null;
+      let currentPlayer = null;
+      let shakaPlayerInstance = null;
+      let hlsInstance = null;
+      let plyrInstance = null;
       
       // Initialize application
       async function initializeApp() {
-        console.log('Fetching IPL streams from:', CONFIG.jsonUrl);
+        console.log('Fetching streams from:', CONFIG.jsonUrl);
         await loadStreamsData();
       }
       
@@ -860,44 +877,65 @@
         try {
           showLoader();
           
-          // Fetch data
           const data = await fetchWithRetry(CONFIG.jsonUrl, CONFIG.retryCount);
           
           if (data && typeof data === 'object') {
             streamsData = data;
-            console.log('Successfully loaded IPL streams:', Object.keys(streamsData));
+            console.log('Successfully loaded streams:', Object.keys(streamsData));
             
             hideLoader();
             initializeUI();
             saveToLocalStorage(data);
             
-            showNotification('IPL streams loaded successfully!', 'success');
+            showNotification('Streams loaded successfully!', 'success');
             
           } else {
-            throw new Error('Invalid data format from server');
+            throw new Error('Invalid data format');
           }
           
         } catch (error) {
-          console.error('Failed to load IPL streams:', error);
+          console.error('Failed to load streams:', error);
           
           // Try cache
           const cachedData = loadFromLocalStorage();
           if (cachedData) {
-            console.log('Using cached IPL data');
+            console.log('Using cached data');
             streamsData = cachedData;
             hideLoader();
             initializeUI();
-            showNotification('Using cached IPL data', 'warning');
+            showNotification('Using cached data', 'warning');
           } else {
-            // Use emergency fallback
-            streamsData = getEmergencyData();
+            // Use fallback data matching your format
+            streamsData = getFallbackData();
             hideLoader();
             initializeUI();
-            showNotification('Using emergency streams', 'error');
+            showNotification('Using fallback streams', 'error');
           }
           
-          showError('Failed to load latest IPL streams. Using cached data.');
+          showError('Failed to load latest streams. Using cached data.');
         }
+      }
+      
+      // Fallback data matching your exact JSON format
+      function getFallbackData() {
+        return {
+          "wpl": {
+            "Jio-Hotstar [Hindi]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
+              "type": "iframe"
+            },
+            "Willow [iOS]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+              "type": "iframe"
+            }
+          },
+          "test": {
+            "Test Stream": {
+              "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "type": "iframe"
+            }
+          }
+        };
       }
       
       // Fetch with retry
@@ -944,7 +982,7 @@
             data: data,
             timestamp: new Date().getTime()
           };
-          localStorage.setItem('cinearena_ipl_streams', JSON.stringify(cacheData));
+          localStorage.setItem('cinearena_streams', JSON.stringify(cacheData));
         } catch (error) {
           console.warn('Failed to save to localStorage:', error);
         }
@@ -952,7 +990,7 @@
       
       function loadFromLocalStorage() {
         try {
-          const cached = localStorage.getItem('cinearena_ipl_streams');
+          const cached = localStorage.getItem('cinearena_streams');
           if (!cached) return null;
           
           const cacheData = JSON.parse(cached);
@@ -967,36 +1005,6 @@
           console.warn('Failed to load from localStorage:', error);
           return null;
         }
-      }
-      
-      // Emergency fallback data
-      function getEmergencyData() {
-        return {
-          "IPL 2024": {
-            "Star Sports Hindi": {
-              "url": "https://cricketstan.github.io/Channel-14/",
-              "type": "iframe",
-              "quality": "HD"
-            },
-            "Star Sports English": {
-              "url": "https://cricketstan.github.io/Channel-14/",
-              "type": "iframe",
-              "quality": "HD"
-            },
-            "Jio Cinema": {
-              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-              "type": "iframe",
-              "quality": "HD"
-            }
-          },
-          "Backup Streams": {
-            "Backup 1": {
-              "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "type": "iframe",
-              "quality": "SD"
-            }
-          }
-        };
       }
       
       // UI Helper functions
@@ -1021,12 +1029,7 @@
       }
       
       function showNotification(message, type = 'info') {
-        // Remove existing notifications
-        const existing = document.querySelectorAll('.notification');
-        existing.forEach(el => el.remove());
-        
         const notification = document.createElement('div');
-        notification.className = 'notification';
         notification.style.cssText = `
           position: fixed;
           top: 70px;
@@ -1071,7 +1074,7 @@
       // Initialize UI
       function initializeUI() {
         if (!streamsData || Object.keys(streamsData).length === 0) {
-          showError('No IPL streams available. Please try again later.');
+          showError('No streams available. Please try again later.');
           return;
         }
         
@@ -1123,7 +1126,7 @@
         infoPanel.classList.remove('visible');
         
         videoPlaceholder.style.display = 'flex';
-        clearStream();
+        clearCurrentPlayer();
       }
       
       function createStreamButtons(category) {
@@ -1140,12 +1143,12 @@
           const button = document.createElement('div');
           button.className = 'stream-button';
           
-          // Add quality badge if available
-          const qualityBadge = stream.quality ? `<span class="stream-type">${stream.quality}</span>` : '';
+          // Get badge class based on stream type
+          const badgeClass = getBadgeClass(stream.type, stream.keyId);
           
           button.innerHTML = `
             <div>${streamName}</div>
-            ${qualityBadge}
+            ${badgeClass ? `<span class="stream-badge ${badgeClass}">${stream.type.toUpperCase()}</span>` : ''}
           `;
           
           button.addEventListener('click', (e) => {
@@ -1154,6 +1157,16 @@
           
           streamButtons.appendChild(button);
         });
+      }
+      
+      function getBadgeClass(type, hasDrm) {
+        if (hasDrm) return 'badge-drm';
+        switch(type) {
+          case 'iframe': return 'badge-iframe';
+          case 'mpd-shaka': return 'badge-mpd';
+          case 'hls': return 'badge-hls';
+          default: return 'badge-iframe';
+        }
       }
       
       async function selectStream(category, streamName, streamData, event) {
@@ -1188,10 +1201,30 @@
       }
       
       async function loadStream(streamData) {
-        console.log('Loading IPL stream:', streamData.url);
+        console.log('Loading stream type:', streamData.type, 'URL:', streamData.url);
         
-        clearStream();
+        clearCurrentPlayer();
         
+        const streamType = streamData.type || 'iframe';
+        
+        switch(streamType) {
+          case 'iframe':
+            return loadIframeStream(streamData);
+            
+          case 'mpd-shaka':
+            return loadMpdShakaStream(streamData);
+            
+          case 'hls':
+            return loadHlsStream(streamData);
+            
+          default:
+            // Default to iframe
+            return loadIframeStream(streamData);
+        }
+      }
+      
+      // Load iframe stream
+      function loadIframeStream(streamData) {
         return new Promise((resolve, reject) => {
           try {
             const iframe = document.createElement('iframe');
@@ -1213,24 +1246,25 @@
             iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation allow-popups');
             
             iframe.onload = () => {
-              console.log('IPL stream loaded successfully');
+              console.log('Iframe loaded successfully');
               customSpinner.style.display = 'none';
+              currentPlayer = iframe;
               resolve();
             };
             
             iframe.onerror = () => {
-              console.error('IPL stream failed to load');
-              reject(new Error('Stream failed to load'));
+              console.error('Iframe failed to load');
+              reject(new Error('Iframe failed to load'));
             };
             
             player.appendChild(iframe);
-            currentIframe = iframe;
             
             // Fallback timeout
             setTimeout(() => {
               if (customSpinner.style.display === 'flex') {
-                console.log('Stream load timeout');
+                console.log('Iframe load timeout');
                 customSpinner.style.display = 'none';
+                currentPlayer = iframe;
                 resolve();
               }
             }, 5000);
@@ -1242,20 +1276,235 @@
         });
       }
       
-      function clearStream() {
-        if (currentIframe) {
-          if (currentIframe.parentNode === player) {
-            player.removeChild(currentIframe);
+      // Load MPD stream with Shaka Player
+      async function loadMpdShakaStream(streamData) {
+        return new Promise(async (resolve, reject) => {
+          try {
+            // Check if Shaka Player is available
+            if (!window.shaka) {
+              throw new Error('Shaka Player not loaded');
+            }
+            
+            // Create video element
+            const video = document.createElement('video');
+            video.id = 'shaka-video';
+            video.style.cssText = `
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
+            
+            player.appendChild(video);
+            
+            // Initialize Shaka Player
+            shaka.polyfill.installAll();
+            
+            const playerInstance = new shaka.Player(video);
+            shakaPlayerInstance = playerInstance;
+            
+            // Listen for error events
+            playerInstance.addEventListener('error', (error) => {
+              console.error('Shaka Player error:', error);
+              reject(new Error('Shaka Player error'));
+            });
+            
+            // Configure for DASH
+            playerInstance.configure({
+              drm: {
+                clearKeys: {}
+              },
+              streaming: {
+                bufferingGoal: 30,
+                rebufferingGoal: 2,
+                bufferBehind: 30
+              }
+            });
+            
+            // Add DRM keys if provided
+            if (streamData.keyId && streamData.key) {
+              playerInstance.configure({
+                drm: {
+                  clearKeys: {
+                    [streamData.keyId]: streamData.key
+                  }
+                }
+              });
+            }
+            
+            // Load the stream
+            await playerInstance.load(streamData.url);
+            
+            // Configure Plyr for UI controls
+            plyrInstance = new Plyr(video, {
+              controls: [
+                'play-large',
+                'play',
+                'progress',
+                'current-time',
+                'mute',
+                'volume',
+                'settings',
+                'fullscreen'
+              ],
+              settings: ['quality', 'speed'],
+              autoplay: true
+            });
+            
+            customSpinner.style.display = 'none';
+            currentPlayer = playerInstance;
+            resolve();
+            
+          } catch (error) {
+            console.error('Error loading MPD stream:', error);
+            reject(error);
           }
-          currentIframe = null;
-        }
-        
-        const iframes = player.querySelectorAll('iframe');
-        iframes.forEach(iframe => {
-          iframe.remove();
         });
       }
       
+      // Load HLS stream
+      async function loadHlsStream(streamData) {
+        return new Promise((resolve, reject) => {
+          try {
+            // Create video element
+            const video = document.createElement('video');
+            video.id = 'hls-video';
+            video.style.cssText = `
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: 2;
+            `;
+            
+            player.appendChild(video);
+            
+            // Check if HLS.js is available
+            if (window.Hls && Hls.isSupported()) {
+              // Use HLS.js
+              const hls = new Hls({
+                enableWorker: true,
+                lowLatencyMode: true,
+                backBufferLength: 90
+              });
+              
+              hlsInstance = hls;
+              
+              hls.loadSource(streamData.url);
+              hls.attachMedia(video);
+              
+              hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                video.play();
+              });
+              
+              hls.on(Hls.Events.ERROR, (event, data) => {
+                console.error('HLS error:', data);
+                if (data.fatal) {
+                  reject(new Error('HLS fatal error'));
+                }
+              });
+              
+              // Configure Plyr for UI controls
+              plyrInstance = new Plyr(video, {
+                controls: [
+                  'play-large',
+                  'play',
+                  'progress',
+                  'current-time',
+                  'mute',
+                  'volume',
+                  'settings',
+                  'fullscreen'
+                ],
+                settings: ['quality', 'speed'],
+                autoplay: true
+              });
+              
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+              // Native HLS support (Safari, iOS)
+              video.src = streamData.url;
+              video.addEventListener('loadedmetadata', () => {
+                video.play();
+              });
+              
+              // Configure Plyr for UI controls
+              plyrInstance = new Plyr(video, {
+                controls: [
+                  'play-large',
+                  'play',
+                  'progress',
+                  'current-time',
+                  'mute',
+                  'volume',
+                  'settings',
+                  'fullscreen'
+                ],
+                settings: ['quality', 'speed'],
+                autoplay: true
+              });
+              
+            } else {
+              throw new Error('HLS not supported');
+            }
+            
+            customSpinner.style.display = 'none';
+            currentPlayer = video;
+            resolve();
+            
+          } catch (error) {
+            console.error('Error loading HLS stream:', error);
+            reject(error);
+          }
+        });
+      }
+      
+      // Clear current player
+      function clearCurrentPlayer() {
+        // Clear iframe
+        const iframes = player.querySelectorAll('iframe');
+        iframes.forEach(iframe => iframe.remove());
+        
+        // Clear video elements
+        const videos = player.querySelectorAll('video');
+        videos.forEach(video => video.remove());
+        
+        // Destroy Shaka Player if exists
+        if (shakaPlayerInstance) {
+          try {
+            shakaPlayerInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying Shaka Player:', e);
+          }
+          shakaPlayerInstance = null;
+        }
+        
+        // Destroy HLS instance if exists
+        if (hlsInstance) {
+          try {
+            hlsInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying HLS instance:', e);
+          }
+          hlsInstance = null;
+        }
+        
+        // Destroy Plyr instance if exists
+        if (plyrInstance) {
+          try {
+            plyrInstance.destroy();
+          } catch (e) {
+            console.warn('Error destroying Plyr instance:', e);
+          }
+          plyrInstance = null;
+        }
+        
+        currentPlayer = null;
+      }
+      
+      // Update info panel
       function updateInfoPanel(category, streamName, streamData) {
         const now = new Date();
         const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1263,8 +1512,8 @@
         const infoHTML = `
           <p><strong>Category:</strong> ${category}</p>
           <p><strong>Stream:</strong> ${streamName}</p>
-          <p><strong>Quality:</strong> ${streamData.quality || 'Auto'}</p>
           <p><strong>Type:</strong> ${streamData.type || 'iframe'}</p>
+          <p><strong>DRM:</strong> ${streamData.keyId ? 'Yes' : 'No'}</p>
           <p><strong>Status:</strong> <span style="color:#4ade80;">● Live</span></p>
           <p><strong>Time:</strong> ${timeString}</p>
         `;
@@ -1274,51 +1523,29 @@
       
       // Event Listeners
       refreshBtn.addEventListener('click', async () => {
-        console.log('Refreshing IPL streams...');
-        showNotification('Refreshing IPL streams...', 'info');
+        console.log('Refreshing streams...');
+        showNotification('Refreshing streams...', 'info');
         await loadStreamsData();
       });
       
       if (retryBtn) {
         retryBtn.addEventListener('click', async () => {
           console.log('Retrying...');
-          showNotification('Retrying to load IPL streams...', 'info');
+          showNotification('Retrying to load streams...', 'info');
           await loadStreamsData();
         });
       }
       
-      // Auto-refresh
-      function startAutoRefresh() {
-        if (autoRefreshTimer) {
-          clearInterval(autoRefreshTimer);
-        }
-        
-        autoRefreshTimer = setInterval(async () => {
-          if (document.visibilityState === 'visible') {
-            console.log('Auto-refreshing IPL streams...');
-            await loadStreamsData();
-          }
-        }, CONFIG.autoRefreshInterval);
-      }
-      
       // Start the application
       initializeApp();
-      startAutoRefresh();
       
-      // Handle page visibility
-      document.addEventListener('visibilitychange', () => {
+      // Auto-refresh every 15 minutes
+      setInterval(async () => {
         if (document.visibilityState === 'visible') {
-          // Page became visible, refresh if data is old
-          const cached = loadFromLocalStorage();
-          if (cached) {
-            const now = new Date().getTime();
-            const cacheTime = localStorage.getItem('cinearena_ipl_cache_time');
-            if (cacheTime && now - parseInt(cacheTime) > 5 * 60 * 1000) {
-              loadStreamsData();
-            }
-          }
+          console.log('Auto-refreshing streams...');
+          await loadStreamsData();
         }
-      });
+      }, 15 * 60 * 1000);
     });
   </script>
 </body>
