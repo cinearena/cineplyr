@@ -613,159 +613,181 @@
       const errorMessage = document.getElementById('errorMessage');
       const customSpinner = document.getElementById('customSpinner');
       
-      // Your JSON data (can be loaded from external file)
-      const streamsData = {
-        "wpl": {
-          "Jio-Hotstar [Hindi]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
-            "type": "iframe"
-          },
-          "Willow [iOS]": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-            "type": "iframe"
-          },
-          "WILLOW SD": {
-            "url": "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/sq3nwcl4j4/out/v1/41930b7349364099bb1b4ef153032937/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "4ae41f5965180707b310360dc5060c09",
-            "key": "f78d1ba450f7ff87f215eb472cb4e17e"
-          }   
-        },
-        "u19": {
-          "Hindi": {
-            "url": "https://cinearena.github.io/id/sports.html?id=Star2HINDISD",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          },
-          "WILLOW": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/etebjbu25h/out/v1/935090e6afe6461594b16a907ce1c30b/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "98b8700f64cb7149fc4695c66b7d8687",
-            "key": "3f67576ea915c603c13aed959474bea8"
-          },
-          "PRIME": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash-sd/enc/khizze9pef/out/v1/89aee82791d94c9ea9eb181b74f9ec4e/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "a7a854393efeeb6067fd79b0cf2bad85",
-            "key": "6bcbb19ef718eb4c965afa3a1f088f2f"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
+      // Get ID from URL parameter
+      function getUrlParameter(name) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+        const results = regex.exec(window.location.href);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+      
+      const streamId = getUrlParameter('id');
+      
+      // Fetch JSON data from external file
+      async function fetchStreamsData() {
+        try {
+          // You can change this URL to your external JSON file
+          const response = await fetch('https://raw.githubusercontent.com/cinearena/json/main/ipl.json');
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
           }
-        },
-        "bbl": {
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/immypkxb41/out/v1/e1171079305c49d59de570bd64ca3e6c/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "c289847d4b541aa61780898dfb403560",
-            "key": "2182da5f65ee33e2b3bb32d82d19ce49"
-          },
-          "CRICLIFE": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          }
-        },
-        "criclife": {
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          }
-        },
-        "willow-fhd": {
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/8yefqdbchb/out/v1/8f25823809304e1a9d165a8305ca08e4/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "c5c42ff75cd4d0dd36979a32e6a433ef",
-            "key": "778d91970da4cfd11c8c727d667785b6"
-          }
-        },
-        "sa20": {
-          "Geo Super": {
-            "url": "https://ml-pull-dvc-myco.io:2096/GEO_SUPER/index.m3u8",
-            "type": "hls",
-            "keyId": "ce49fc405dd3c8a7783d8597fc1c68cd",
-            "key": "7022f11d572084a82fd0b883703ed1b5"
-          },
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          }
-        },
-        "indnz": {
-          "HINDI": {
-            "url": "https://allrounderlive.pages.dev/player?url=https://dillzy.cricketstream745.workers.dev/live.m3u8",
-            "type": "iframe",
-            "keyId": "192b1115da041585c77200128549efa1",
-            "key": "634e10efe4abbb14be400a3ccbac0258"
-          },
-          "CricLife": {
-            "url": "https://ev-fast-mpd.starzplayarabia.com/live/eds/CricLife2/DASH/CricLife2.mpd",
-            "type": "mpd-shaka",
-            "keyId": "48bef83b4c6a3c5189b01b0126210da4",
-            "key": "bd085230b7b09e50954fe0af111a8a9f"
-          },
-          "WILLOW SD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/vedlscjezi/out/v1/1a69808f3f44461ea89171d443225492/cenc-sd.mpd",
-            "type": "mpd-shaka",
-            "keyId": "5692feb4f680daf79dffe3497f469b79",
-            "key": "e358d00ea61053235c674b2ede952fcd"
-          },
-          "WILLOW FHD": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/ctipfgkjyw/out/v1/c934f6d404ad4a75bf9deb4142e66005/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "24bb1d301ddd62a816b2eba502f20c36",
-            "key": "3fbcde068cd0c81823db589fa8b21bca"
-          },
-          "Star Sports-2": {
-            "url": "https://cricketstan.github.io/Channel-14/",
-            "type": "iframe",
-            "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
-            "key": "e620a970cea474c491ac78ae71a4d764"
-          }
-        },
-        "willow": {
-          "WILLOW ADS FREE": {
-            "url": "https://otte.live.fly.ww.aiv-cdn.net/sin-nitro/live/clients/dash/enc/njsiktakqy/out/v1/b25ec77dd6d547d68df6d07f165896ff/cenc.mpd",
-            "type": "mpd-shaka",
-            "keyId": "dd94299841023377b7302276118a971b",
-            "key": "b0e803fe7d4c136d0ba8eac091a032b7"
-          }
-        },
-        "willowios": {
-          "Willow [iOS]": {
-            "url": "https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
-            "type": "hls"
-          }
+          return await response.json();
+        } catch (error) {
+          console.error('Error fetching streams data:', error);
+          // Fallback to local data if fetch fails
+          return getLocalStreamsData();
         }
-      };
-
+      }
+      
+      // Local fallback data (same as your original data)
+      function getLocalStreamsData() {
+        return {
+          "wpl": {
+            "Jio-Hotstar [Hindi]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://dillzyserver.dillzycreations.workers.dev/live/king.m3u8",
+              "type": "iframe"
+            },
+            "Willow [iOS]": {
+              "url": "https://allrounderlive.pages.dev/player?url=https://amg01269-amg01269c1-sportstribal-emea-5204.playouts.now.amagi.tv/ts-eu-w1-n2/playlist/amg01269-willowtvfast-willowplus-sportstribalemea/playlist.m3u8",
+              "type": "iframe"
+            },
+            "WILLOW SD": {
+              "url": "https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/clients/dash-sd/enc/sq3nwcl4j4/out/v1/41930b7349364099bb1b4ef153032937/cenc-sd.mpd",
+              "type": "mpd-shaka",
+              "keyId": "4ae41f5965180707b310360dc5060c09",
+              "key": "f78d1ba450f7ff87f215eb472cb4e17e"
+            }   
+          },
+          "u19": {
+            "Hindi": {
+              "url": "https://cinearena.github.io/id/sports.html?id=Star2HINDISD",
+              "type": "iframe",
+              "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+              "key": "e620a970cea474c491ac78ae71a4d764"
+            },
+            "WILLOW": {
+              "url": "https://otte.live.fly.ww.aiv-cdn.net/iad-nitro/live/clients/dash/enc/etebjbu25h/out/v1/935090e6afe6461594b16a907ce1c30b/cenc.mpd",
+              "type": "mpd-shaka",
+              "keyId": "98b8700f64cb7149fc4695c66b7d8687",
+              "key": "3f67576ea915c603c13aed959474bea8"
+            },
+            "PRIME": {
+              "url": "https://otte.live.fly.ww.aiv-cdn.net/syd-nitro/live/clients/dash-sd/enc/khizze9pef/out/v1/89aee82791d94c9ea9eb181b74f9ec4e/cenc-sd.mpd",
+              "type": "mpd-shaka",
+              "keyId": "a7a854393efeeb6067fd79b0cf2bad85",
+              "key": "6bcbb19ef718eb4c965afa3a1f088f2f"
+            },
+            "Star Sports-2": {
+              "url": "https://cricketstan.github.io/Channel-14/",
+              "type": "iframe",
+              "keyId": "9457eb90129456fa8ea95e10ba4ac51e",
+              "key": "e620a970cea474c491ac78ae71a4d764"
+            }
+          }
+        };
+      }
+      
       // State variables
       let currentCategory = null;
       let currentStream = null;
       let currentPlayer = null;
+      let streamsData = {};
       
-      // Initialize UI
-      function initializeUI() {
+      // Initialize UI with fetched data
+      async function initializeUI() {
         console.log('Initializing UI...');
         
-        // Create category tabs
-        Object.keys(streamsData).forEach(category => {
+        // Show loading state
+        categoryTabs.innerHTML = '<div class="loader-spinner"></div>';
+        streamButtons.innerHTML = '<p>Loading streams...</p>';
+        
+        try {
+          // Fetch data from external JSON file
+          streamsData = await fetchStreamsData();
+          
+          // Filter data based on ID parameter if provided
+          let filteredData = streamsData;
+          if (streamId) {
+            console.log('Filtering for ID:', streamId);
+            filteredData = filterDataById(streamsData, streamId);
+            
+            // Update page title
+            document.title = `${streamId.toUpperCase()} - CineArena.Live`;
+          }
+          
+          // Create category tabs from filtered data
+          createCategoryTabs(filteredData);
+          
+          // Select first category by default
+          const firstCategory = Object.keys(filteredData)[0];
+          if (firstCategory) {
+            selectCategory(firstCategory);
+          } else {
+            showNoStreamsMessage();
+          }
+        } catch (error) {
+          console.error('Error initializing UI:', error);
+          showErrorMessage('Failed to load streams data');
+        }
+      }
+      
+      // Filter data by ID (search in category names and stream names)
+      function filterDataById(data, searchId) {
+        const filtered = {};
+        const searchLower = searchId.toLowerCase();
+        
+        Object.keys(data).forEach(category => {
+          // Check if category matches search
+          if (category.toLowerCase().includes(searchLower)) {
+            filtered[category] = data[category];
+          } else {
+            // Check if any stream in this category matches search
+            const matchingStreams = {};
+            Object.keys(data[category]).forEach(streamName => {
+              if (streamName.toLowerCase().includes(searchLower)) {
+                matchingStreams[streamName] = data[category][streamName];
+              }
+            });
+            
+            // If we found matching streams in this category, add the category
+            if (Object.keys(matchingStreams).length > 0) {
+              filtered[category] = matchingStreams;
+            }
+          }
+        });
+        
+        return filtered;
+      }
+      
+      // Show no streams message
+      function showNoStreamsMessage() {
+        categoryTabs.innerHTML = '';
+        streamButtons.innerHTML = `
+          <div class="error-message">
+            <h2>No Streams Found</h2>
+            <p>No streams match your search: "${streamId}"</p>
+            <p><a href="?" style="color: var(--sky-medium); text-decoration: underline;">View all streams</a></p>
+          </div>
+        `;
+      }
+      
+      // Show error message
+      function showErrorMessage(message) {
+        streamButtons.innerHTML = `
+          <div class="error-message">
+            <h2>Error Loading Streams</h2>
+            <p>${message}</p>
+          </div>
+        `;
+      }
+      
+      // Create category tabs
+      function createCategoryTabs(data) {
+        categoryTabs.innerHTML = '';
+        
+        Object.keys(data).forEach(category => {
           const tab = document.createElement('div');
           tab.className = 'category-tab';
           tab.textContent = category.toUpperCase();
@@ -777,12 +799,6 @@
           
           categoryTabs.appendChild(tab);
         });
-        
-        // Select first category by default
-        const firstCategory = Object.keys(streamsData)[0];
-        if (firstCategory) {
-          selectCategory(firstCategory);
-        }
       }
       
       // Select category
