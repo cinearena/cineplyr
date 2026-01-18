@@ -397,16 +397,29 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Green Live Status Badge */
+    /* Status Badges */
     .status-badge {
       display: inline-block;
       padding: 2px 8px;
-      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-      color: white;
       font-size: 0.7rem;
       font-weight: 600;
       border-radius: 4px;
       margin-left: 8px;
+    }
+    
+    .status-live {
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+      color: white;
+    }
+    
+    .status-loaded {
+      background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+      color: white;
+    }
+    
+    .status-fail {
+      background: linear-gradient(135deg, #FF5252 0%, #D32F2F 100%);
+      color: white;
     }
 
     /* Loader and Error States */
@@ -739,7 +752,7 @@
       let currentStream = null;
       let currentPlayer = null;
       let streamsData = {};
-      let isStreamPlaying = false;
+      let streamStatus = 'stopped'; // 'stopped', 'loaded', 'playing', 'failed'
       let autoPlayFirstChannel = false;
       
       // Initialize UI with fetched data
@@ -949,15 +962,20 @@
         customSpinner.style.display = 'flex';
         errorMessage.classList.add('hidden');
         
+        // Reset status
+        streamStatus = 'stopped';
+        
+        // Update info panel with loading status
+        updateInfoPanel(category, streamName, streamData, streamStatus);
+        infoPanel.classList.add('visible');
+        
         // Load stream
         try {
           await loadStream(streamData);
-          
-          // Update info panel with status
-          updateInfoPanel(category, streamName, streamData, true);
-          infoPanel.classList.add('visible');
         } catch (error) {
           console.error('Error loading stream:', error);
+          streamStatus = 'failed';
+          updateInfoPanel(category, streamName, streamData, streamStatus);
           errorMessage.classList.remove('hidden');
           customSpinner.style.display = 'none';
         }
@@ -970,8 +988,8 @@
         // Clear existing player
         clearPlayer();
         
-        // Reset stream playing state
-        isStreamPlaying = false;
+        // Reset stream status
+        streamStatus = 'stopped';
         
         switch(streamData.type) {
           case 'iframe':
@@ -1004,8 +1022,13 @@
           iframe.allow = 'autoplay; encrypted-media; fullscreen';
           iframe.allowFullscreen = true;
           
+          // Set stream as loaded
+          streamStatus = 'loaded';
+          updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          
           // Set stream as playing for iframe
-          isStreamPlaying = true;
+          streamStatus = 'playing';
+          updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           
           playerContainer.appendChild(iframe);
           currentPlayer = iframe;
@@ -1053,23 +1076,36 @@
           await player.load(streamData.url);
           currentPlayer = player;
           
-          // Set stream as playing when loaded
-          isStreamPlaying = true;
+          // Set stream as loaded
+          streamStatus = 'loaded';
+          updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          
+          // Set stream as playing when autoplay works
+          streamStatus = 'playing';
+          updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           
           // Listen for play events
           video.addEventListener('play', () => {
-            isStreamPlaying = true;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, true);
+            streamStatus = 'playing';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
           // Listen for pause events
           video.addEventListener('pause', () => {
-            isStreamPlaying = false;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, false);
+            streamStatus = 'loaded';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          });
+          
+          // Listen for error events
+          video.addEventListener('error', () => {
+            streamStatus = 'failed';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
         } catch (error) {
           console.error('Error loading MPD:', error);
+          streamStatus = 'failed';
+          updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           throw error;
         }
       }
@@ -1092,22 +1128,40 @@
           hls.attachMedia(video);
           
           hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            // Set stream as loaded
+            streamStatus = 'loaded';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+            
             video.play().then(() => {
-              isStreamPlaying = true;
-              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, true);
+              streamStatus = 'playing';
+              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+            }).catch(() => {
+              streamStatus = 'loaded';
+              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
             });
           });
           
           // Listen for play events
           video.addEventListener('play', () => {
-            isStreamPlaying = true;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, true);
+            streamStatus = 'playing';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
           // Listen for pause events
           video.addEventListener('pause', () => {
-            isStreamPlaying = false;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, false);
+            streamStatus = 'loaded';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          });
+          
+          // Listen for error events
+          video.addEventListener('error', () => {
+            streamStatus = 'failed';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          });
+          
+          hls.on(Hls.Events.ERROR, () => {
+            streamStatus = 'failed';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
           currentPlayer = hls;
@@ -1115,22 +1169,35 @@
           // Native HLS support (Safari, iOS)
           video.src = streamData.url;
           video.addEventListener('loadedmetadata', () => {
+            // Set stream as loaded
+            streamStatus = 'loaded';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+            
             video.play().then(() => {
-              isStreamPlaying = true;
-              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, true);
+              streamStatus = 'playing';
+              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+            }).catch(() => {
+              streamStatus = 'loaded';
+              updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
             });
           });
           
           // Listen for play events
           video.addEventListener('play', () => {
-            isStreamPlaying = true;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, true);
+            streamStatus = 'playing';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
           // Listen for pause events
           video.addEventListener('pause', () => {
-            isStreamPlaying = false;
-            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, false);
+            streamStatus = 'loaded';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
+          });
+          
+          // Listen for error events
+          video.addEventListener('error', () => {
+            streamStatus = 'failed';
+            updateInfoPanel(currentStream.category, currentStream.name, currentStream.data, streamStatus);
           });
           
           currentPlayer = video;
@@ -1150,8 +1217,8 @@
           currentPlayer = null;
         }
         
-        // Reset stream playing state
-        isStreamPlaying = false;
+        // Reset stream status
+        streamStatus = 'stopped';
         
         // Remove all children from player container
         while (playerContainer.firstChild) {
@@ -1171,12 +1238,33 @@
       }
       
       // Update info panel
-      function updateInfoPanel(category, streamName, streamData, isLive = false) {
+      function updateInfoPanel(category, streamName, streamData, status = 'stopped') {
+        let statusText = '';
+        let statusClass = '';
+        
+        switch(status) {
+          case 'playing':
+            statusText = 'Live';
+            statusClass = 'status-live';
+            break;
+          case 'loaded':
+            statusText = 'Loaded';
+            statusClass = 'status-loaded';
+            break;
+          case 'failed':
+            statusText = 'Fail';
+            statusClass = 'status-fail';
+            break;
+          default:
+            statusText = 'Stopped';
+            break;
+        }
+        
         const infoHTML = `
           <p><strong>Category:</strong> ${category.toUpperCase()}</p>
           <p><strong>Stream:</strong> ${streamName}</p>
           <p><strong>Type:</strong> ${streamData.type}</p>
-          <p><strong>Status:</strong> ${isLive ? '<span class="status-badge">Live</span>' : 'Stopped'}</p>
+          <p><strong>Status:</strong> ${statusText} ${statusClass ? `<span class="status-badge ${statusClass}">${statusText}</span>` : ''}</p>
           ${streamData.keyId ? `<p><strong>DRM:</strong> Enabled</p>` : ''}
         `;
         
