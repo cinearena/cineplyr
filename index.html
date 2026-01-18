@@ -694,7 +694,7 @@
       async function fetchStreamsData() {
         try {
           // You can change this URL to your external JSON file
-          const response = await fetch('https://raw.githubusercontent.com/cinearena/json/main/ipl.json');
+          const response = await fetch('https://cricket.asifansaribr.workers.dev/');
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
