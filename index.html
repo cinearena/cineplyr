@@ -397,17 +397,16 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Live Status Badge */
-    .live-badge {
+    /* Green Live Status Badge */
+    .status-badge {
       display: inline-block;
-      padding: 4px 10px;
-      background: linear-gradient(135deg, #FF5252 0%, #FF4081 100%);
+      padding: 2px 8px;
+      background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
       color: white;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      border-radius: 20px;
-      margin-left: 10px;
-      animation: pulse 2s infinite;
+      border-radius: 4px;
+      margin-left: 8px;
     }
 
     /* Loader and Error States */
@@ -484,6 +483,10 @@
       margin: var(--spacing-lg) auto;
       padding: 0 var(--spacing-md);
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     /* Responsive Design */
@@ -950,7 +953,7 @@
         try {
           await loadStream(streamData);
           
-          // Update info panel with live status
+          // Update info panel with status
           updateInfoPanel(category, streamName, streamData, true);
           infoPanel.classList.add('visible');
         } catch (error) {
@@ -1171,8 +1174,9 @@
       function updateInfoPanel(category, streamName, streamData, isLive = false) {
         const infoHTML = `
           <p><strong>Category:</strong> ${category.toUpperCase()}</p>
-          <p><strong>Stream:</strong> ${streamName} ${isLive ? '<span class="live-badge">LIVE</span>' : ''}</p>
+          <p><strong>Stream:</strong> ${streamName}</p>
           <p><strong>Type:</strong> ${streamData.type}</p>
+          <p><strong>Status:</strong> ${isLive ? '<span class="status-badge">Live</span>' : 'Stopped'}</p>
           ${streamData.keyId ? `<p><strong>DRM:</strong> Enabled</p>` : ''}
         `;
         
