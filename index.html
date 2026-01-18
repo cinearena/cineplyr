@@ -283,6 +283,7 @@
       transition: var(--transition);
       white-space: nowrap;
       flex-shrink: 0;
+      position: relative;
     }
 
     .category-tab:hover {
@@ -295,6 +296,27 @@
       background: var(--sky-gradient);
       border-color: transparent;
       color: white;
+    }
+
+    /* Live Badge for Category Tabs */
+    .category-live-badge {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      padding: 2px 6px;
+      background: linear-gradient(135deg, #FF5252 0%, #FF4081 100%);
+      color: white;
+      font-size: 0.6rem;
+      font-weight: 700;
+      border-radius: 10px;
+      animation: pulse 2s infinite;
+      z-index: 1;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
     }
 
     /* Stream Buttons */
@@ -353,26 +375,6 @@
       font-size: 0.8rem;
       margin-top: var(--spacing-xs);
       color: var(--sky-light);
-    }
-
-    /* Live Badge for Stream Buttons */
-    .stream-live-badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      padding: 2px 8px;
-      background: linear-gradient(135deg, #FF5252 0%, #FF4081 100%);
-      color: white;
-      font-size: 0.7rem;
-      font-weight: 600;
-      border-radius: 4px;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
     }
 
     /* Info Panel */
@@ -531,6 +533,13 @@
       .category-tabs {
         flex-wrap: nowrap;
         overflow-x: auto;
+      }
+      
+      .category-live-badge {
+        top: -6px;
+        right: -6px;
+        padding: 1px 4px;
+        font-size: 0.5rem;
       }
     }
 
@@ -831,6 +840,14 @@
           tab.textContent = category.toUpperCase();
           tab.dataset.category = category;
           
+          // Add live badge to category tab if it matches the searched ID
+          if (streamId && category.toLowerCase() === streamId.toLowerCase()) {
+            const liveBadge = document.createElement('span');
+            liveBadge.className = 'category-live-badge';
+            liveBadge.textContent = 'LIVE';
+            tab.appendChild(liveBadge);
+          }
+          
           tab.addEventListener('click', () => {
             selectCategory(category, false);
           });
@@ -879,15 +896,10 @@
           const button = document.createElement('div');
           button.className = 'stream-button';
           
-          // Add live badge if stream matches search ID
-          const hasLiveBadge = streamId && (streamName.toLowerCase().includes(streamId.toLowerCase()) || 
-                                            category.toLowerCase().includes(streamId.toLowerCase()));
-          
           button.innerHTML = `
             ${streamName}
             <div class="stream-type">${stream.type}</div>
             ${stream.keyId ? '<span class="stream-badge">DRM</span>' : ''}
-            ${hasLiveBadge ? '<span class="stream-live-badge">LIVE</span>' : ''}
           `;
           
           button.addEventListener('click', () => {
