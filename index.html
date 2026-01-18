@@ -171,6 +171,57 @@
       border: none;
     }
 
+    /* Remove native video controls */
+    #player video {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+    
+    #player video::-webkit-media-controls {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-enclosure {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-panel {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-play-button {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-timeline {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-current-time-display {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-time-remaining-display {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-timeline-container {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-mute-button {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-toggle-closed-captions-button {
+      display: none !important;
+    }
+    
+    #player video::-webkit-media-controls-fullscreen-button {
+      display: none !important;
+    }
+
     .custom-shaka-spinner-container {
       position: absolute;
       top: 0;
@@ -392,12 +443,40 @@
       transition: var(--transition);
     }
 
+    /* Bottom CTA - Centered */
+    .bottom-cta {
+      max-width: 1400px;
+      margin: var(--spacing-lg) auto;
+      padding: 0 var(--spacing-md);
+      text-align: center;
+    }
+
     /* Responsive Design */
     @media (max-width: 768px) {
       .header-inner {
-        flex-direction: column;
+        /* Changed from column to row to keep logo and button in one line */
+        flex-direction: row;
         text-align: center;
-        padding: var(--spacing-md);
+        padding: var(--spacing-sm);
+        gap: var(--spacing-sm);
+      }
+
+      /* Ensure both fit in one line */
+      .logo {
+        font-size: 1.5rem;
+        flex-shrink: 1;
+        min-width: 0;
+        overflow: hidden;
+      }
+
+      .telegram-join {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .telegram-join .label {
+        display: inline; /* Keep text visible */
       }
 
       .main-wrap {
@@ -431,14 +510,21 @@
         padding: var(--spacing-xs) var(--spacing-md);
         font-size: 0.9rem;
       }
-    }
-
-    /* Bottom CTA */
-    .bottom-cta {
-      max-width: 1400px;
-      margin: var(--spacing-lg) auto;
-      padding: 0 var(--spacing-md);
-      text-align: center;
+      
+      /* For very small screens, make header items even more compact */
+      .header-inner {
+        padding: 8px;
+        gap: 8px;
+      }
+      
+      .logo {
+        font-size: 1.3rem;
+      }
+      
+      .telegram-join {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+      }
     }
 
     /* Utility Classes */
@@ -831,7 +917,7 @@
         
         const video = document.createElement('video');
         video.id = 'shaka-video';
-        video.setAttribute('controls', '');
+        video.setAttribute('controls', 'false'); // Changed from '' to 'false' to remove controls
         video.setAttribute('autoplay', '');
         video.style.width = '100%';
         video.style.height = '100%';
@@ -869,7 +955,7 @@
       async function loadHlsStream(streamData) {
         const video = document.createElement('video');
         video.id = 'hls-video';
-        video.setAttribute('controls', '');
+        video.setAttribute('controls', 'false'); // Changed from '' to 'false' to remove controls
         video.setAttribute('autoplay', '');
         video.style.width = '100%';
         video.style.height = '100%';
