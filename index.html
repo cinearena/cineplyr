@@ -355,6 +355,26 @@
       color: var(--sky-light);
     }
 
+    /* Live Badge for Stream Buttons */
+    .stream-live-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 2px 8px;
+      background: linear-gradient(135deg, #FF5252 0%, #FF4081 100%);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      border-radius: 4px;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
     /* Info Panel */
     .info-panel {
       background: rgba(65, 184, 241, 0.05);
@@ -386,12 +406,6 @@
       border-radius: 20px;
       margin-left: 10px;
       animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.7; }
-      100% { opacity: 1; }
     }
 
     /* Loader and Error States */
@@ -714,6 +728,7 @@
       let currentPlayer = null;
       let streamsData = {};
       let isStreamPlaying = false;
+      let autoPlayFirstChannel = false;
       
       // Initialize UI with fetched data
       async function initializeUI() {
@@ -727,7 +742,7 @@
           // Fetch data from external JSON file
           streamsData = await fetchStreamsData();
           
-          // Filter data based on ID parameter if provided
+          // Check if we have an ID search parameter
           let filteredData = streamsData;
           if (streamId) {
             console.log('Filtering for ID:', streamId);
@@ -735,6 +750,9 @@
             
             // Update page title
             document.title = `${streamId.toUpperCase()} - CineArena.Live`;
+            
+            // Set flag to auto-play first channel
+            autoPlayFirstChannel = true;
           }
           
           // Create category tabs from filtered data
@@ -743,7 +761,7 @@
           // Select first category by default
           const firstCategory = Object.keys(filteredData)[0];
           if (firstCategory) {
-            selectCategory(firstCategory);
+            selectCategory(firstCategory, true); // Pass true to indicate initial load
           } else {
             showNoStreamsMessage();
           }
@@ -814,7 +832,7 @@
           tab.dataset.category = category;
           
           tab.addEventListener('click', () => {
-            selectCategory(category);
+            selectCategory(category, false);
           });
           
           categoryTabs.appendChild(tab);
@@ -822,8 +840,8 @@
       }
       
       // Select category
-      function selectCategory(category) {
-        console.log('Selecting category:', category);
+      function selectCategory(category, isInitialLoad = false) {
+        console.log('Selecting category:', category, 'isInitialLoad:', isInitialLoad);
         
         // Update active tab
         document.querySelectorAll('.category-tab').forEach(tab => {
@@ -841,6 +859,12 @@
         
         // Clear player if no stream selected
         clearPlayer();
+        
+        // Auto-play first channel if we're searching by ID and this is initial load
+        if (streamId && isInitialLoad && autoPlayFirstChannel) {
+          autoPlayFirstChannel = false; // Reset flag
+          autoPlayFirstStream(category);
+        }
       }
       
       // Create stream buttons for category
@@ -854,10 +878,16 @@
           const stream = streams[streamName];
           const button = document.createElement('div');
           button.className = 'stream-button';
+          
+          // Add live badge if stream matches search ID
+          const hasLiveBadge = streamId && (streamName.toLowerCase().includes(streamId.toLowerCase()) || 
+                                            category.toLowerCase().includes(streamId.toLowerCase()));
+          
           button.innerHTML = `
             ${streamName}
             <div class="stream-type">${stream.type}</div>
             ${stream.keyId ? '<span class="stream-badge">DRM</span>' : ''}
+            ${hasLiveBadge ? '<span class="stream-live-badge">LIVE</span>' : ''}
           `;
           
           button.addEventListener('click', () => {
@@ -868,15 +898,35 @@
         });
       }
       
-      // Select stream
-      async function selectStream(category, streamName, streamData) {
-        console.log('Selecting stream:', streamName);
+      // Auto-play first stream in category
+      function autoPlayFirstStream(category) {
+        const streams = streamsData[category];
+        const firstStreamName = Object.keys(streams)[0];
         
-        // Update active button
-        document.querySelectorAll('.stream-button').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        event.target.closest('.stream-button').classList.add('active');
+        if (firstStreamName) {
+          console.log('Auto-playing first stream:', firstStreamName);
+          const firstStream = streams[firstStreamName];
+          
+          // Simulate click on first stream button
+          const firstButton = streamButtons.querySelector('.stream-button');
+          if (firstButton) {
+            firstButton.classList.add('active');
+            selectStream(category, firstStreamName, firstStream, true);
+          }
+        }
+      }
+      
+      // Select stream
+      async function selectStream(category, streamName, streamData, isAutoPlay = false) {
+        console.log('Selecting stream:', streamName, 'isAutoPlay:', isAutoPlay);
+        
+        if (!isAutoPlay) {
+          // Update active button only if not auto-playing
+          document.querySelectorAll('.stream-button').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          event.target.closest('.stream-button').classList.add('active');
+        }
         
         currentStream = { category, name: streamName, data: streamData };
         
